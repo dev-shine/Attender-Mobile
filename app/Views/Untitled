@@ -1,0 +1,1399 @@
+
+import ZHeader from 'ZHeader';
+import ZTextInput from 'ZTextInput';
+import ZHero from 'ZHero';
+import ZIcon from 'ZIcon';
+import ZSliderCard from 'ZSliderCard';
+import ZSubText from 'ZSubText';
+import ZMuteText from 'ZMuteText';
+import ZText from 'ZText';
+import ZNumericStepperBadge from 'ZNumericStepperBadge';
+import ZRoundedButton from 'ZRoundedButton';
+import ZFullCard from 'ZFullCard';
+import ZTab from 'ZTab';
+import ZTabItem from 'ZTabItem';
+import ZCustomHeader from 'ZCustomHeader';
+import ZAvatar from 'ZAvatar';
+import ZMessageCard from 'ZMessageCard';
+import ZPhoto from 'ZPhoto';
+import ZProfileCard from 'ZProfileCard';
+import ZCard from 'ZCard';
+import ZRater from 'NRater';
+import ZButtonOutline from 'ZButtonOutline';
+import ZHeaderTab from 'ZHeaderTab';
+import API from 'API';
+
+import Icon from 'react-native-vector-icons/Ionicons';
+var moment = require('moment');
+import React, { Component } from 'react';
+import {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  ScrollView,
+  TouchableOpacity,
+  Modal,
+  Image
+} from 'react-native';
+
+export default class VenueStaff extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      text: '',
+      staffs: [],
+      tabStaffSelected: true,
+      tabTrialSelected: false,
+      isShowStaffSchedule: false,
+      isShowEditButton: true,
+      showMonSched1: false,
+      showMonSched2: false,
+      showTueSched1: false,
+      showTueSched2: false,
+      showWedSched1: false,
+      showWedSched2: false,
+      showThuSched1: false,
+      showThuSched2: false,
+      showFriSched1: false,
+      showFriSched2: false,
+      showSatSched1: false,
+      showSatSched2: false,
+      showSunSched1: false,
+      showSunSched2: false,
+      MonSched1: '',
+      MonSched2: '',
+      TueSched1: '',
+      TueSched2: '',
+      WedSched1: '',
+      WedSched2: '',
+      ThuSched1: '',
+      ThuSched2: '',
+      FriSched1: '',
+      FriSched2: '',
+      SatSched1: '',
+      SatSched2: '',
+      SunSched1: '',
+      SunSched2: '',
+      isTrialShow: false,
+      data1: [],
+      data2: [],
+      selectedStaff: {},
+      isEditButton: true,
+      showTask: false,
+      hideTaskButton: true,
+      editableState: false
+    }
+  }
+
+  static navigationOptions = {
+    header: null,
+  };
+
+  componentDidMount () {
+    var results = [
+      {
+        fullname: 'Andrew Orsen',
+        skills: true,
+        experience: false,
+        rate: '$20 - $25/H'
+      },
+      {
+        fullname: 'Derrick Soto',
+        skills: false,
+        experience: true,
+        rate: '$22 - $24/H'
+      },
+      {
+        fullname: 'Vera Wilkerson',
+        skills: true,
+        experience: false,
+        rate: '$18 - $22/H'
+      },{
+        fullname: 'Bertha Coleman',
+        skills: true,
+        experience: false,
+        rate: '$23 - $26/H'
+      },
+    ]
+
+    var $tasks = [
+    'Prepare 2 exotic coctails and server them to 10 customers',
+    "Assess customer's needs and preferences and make recommendations",
+    'Stay guest focused and nurture an excellent guest experience'
+    ]
+
+    this.setState({staffs: results});
+    this.getActiveStaffs();
+    this.getTrialStaffs();
+  }
+
+  getActiveStaffs = () => {
+    API.get('active-staffs').then((res) => {
+      console.log('ActiveStaff', res)
+      if (res.status) {
+        this.setState({data1: res.staffs});
+      }
+    })
+  }
+
+  getTrialStaffs = () => {
+    API.get('trial-staffs').then((res) => {
+      console.log('TrialStaff', res)
+      if (res.status) {
+        this.setState({data2: res.staffs});
+      }
+    })
+  }
+
+  onChangeTask = (value, key) => {
+    var tasks = this.state.data2;
+    var newTask = tasks[key];
+    newTask.description = value;
+    this.setState({data2: tasks});
+  }
+
+  onTaskPress = () => {
+    var tasks = this.state.data2
+    var $task = {
+      description: ''
+    }
+
+    tasks.push($task)
+    this.setState({
+      showTask: true,
+      data2: tasks
+    })
+  }
+
+  onSuggestPress = () => {
+    var suggests = this.state.data2
+    var $suggest = {
+      description: ''
+    }
+
+    suggests.push($suggest)
+    this.setState({
+      showSuggest: true,
+      data2: suggests
+    })
+  }
+
+  renderTaskButton = () => {
+    if(!this.state.hideTaskButton){
+      return (
+        <View>
+          <TouchableOpacity onPress={() => this.onTaskPress()}>
+            <View style={{backgroundColor: '#625BBA', padding: 5, paddingHorizontal: 10, height: 40, borderRadius: 30, alignItems: 'center', justifyContent: 'center', width: 120}}>
+              <Text style={{fontSize: 15, fontWeight: '500', color: '#D9FFFF'}}>+ Add Task</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )
+    }
+  }
+
+  renderSuggestButton = () => {
+    if(!this.state.hideSuggestButton){
+      return (
+        <View style={{marginTop: 20}}>
+          <TouchableOpacity onPress={() => this.onSuggestPress()}>
+            <View style={{backgroundColor: '#625BBA', padding: 5, paddingHorizontal: 10, height: 40, borderRadius: 30, alignItems: 'center', justifyContent: 'center', width: 150}}>
+              <Text style={{fontSize: 15, fontWeight: '500', color: '#D9FFFF'}}>+ Add Suggestion</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      )
+    }
+  }
+
+  renderTask = (task, key) => {
+    if(this.state.showTask){
+      return (
+        <View key={key} style={{flexDirection: 'row', marginVertical: 10, borderWidth: (this.state.buttonStateTaskSuggest ? 0 : 0.5)}}>
+          <View style={{padding: 10, borderRightWidth: (this.state.buttonStateTaskSuggest ? 0 : 0.5)}}>
+            <Image source={require('../Assets/Donelisticon.png')} style={{height: 20, width: 20, resizeMode: 'stretch', marginTop: 5, marginLeft: 5, padding: 10}}/>
+          </View>
+          <View style={{flex: 1, marginLeft: 5}}>
+            <TextInput placeholder='type task here..' editable={this.state.editableState} multiline={true} onChangeText={(value) => this.onChangeTask(value, key)} style={{fontSize: 15, color: '#393650', height: 50, padding: 10}}/>
+          </View>
+          {this.renderTaskRemove()}
+        </View>
+      )
+    }
+  }
+
+  renderTaskSuggest = () => {
+    if(this.state.isEditButton){
+      return(
+        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 5}}>
+            <TouchableOpacity onPress={() => this.onButtonPress()}>
+              <Image source={require('../Assets/editiconpopup.png')} style={{height: 25, width: 25, resizeMode: 'stretch'}}/>
+            </TouchableOpacity>
+          </View>
+          <Text style={{fontSize: 16, color: '#818181'}}>Edit</Text>
+        </View>
+      )
+    }else{
+      return(
+        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+          <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 5}}>
+            <TouchableOpacity onPress={() => this.onButtonPress()}>
+              <Image source={require('../Assets/Save.png')} style={{height: 17, width: 17, resizeMode: 'stretch'}}/>
+            </TouchableOpacity>
+          </View>
+          <Text style={{fontSize: 16, color: '#818181', marginLeft: 3}}>Save</Text>
+        </View>
+      )
+    }
+  }
+
+  onButtonPress = () => {
+    if (this.state.isEditButton) {
+      this.setState({
+        isEditButton: false,
+        hideTaskButton: false,
+        hideSuggestButton: false,
+        editableState: true,
+      });
+    }else {
+      this.setState({
+        isEditButton: true,
+        hideTaskButton: true,
+        hideSuggestButton: true,
+        editableState: false
+      });
+    }
+  }
+
+  renderHeaderTabStaff = (text, state) => {
+    if(this.state.tabStaffSelected) {
+      return (
+        <TouchableOpacity style={{flex: 1}} onPress={()=>this.onSelectHeaderTab('Staff')}>
+          <View style={{justifyContent: 'center', alignItems: 'center', borderBottomWidth: 2.5, borderColor: '#8F90FC', padding: 20}}>
+            <Text style={{fontSize: 17, color: 'white', fontWeight: '500'}}>{text}</Text>
+          </View>
+        </TouchableOpacity>
+      )
+    }else{
+      return (
+        <TouchableOpacity style={{flex: 1}} onPress={()=>this.onSelectHeaderTab('Staff')}>
+          <View style={{justifyContent: 'center', alignItems: 'center', padding: 20}}>
+            <Text style={{fontSize: 17, color: '#9B9AA6', fontWeight: '500'}}>{text}</Text>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+
+  }
+
+  renderHeaderTabTrial = (text, state) => {
+    if(this.state.tabTrialSelected){
+      return (
+        <TouchableOpacity style={{flex: 1}} onPress={()=>this.onSelectHeaderTab('Trial')}>
+          <View style={{justifyContent: 'center', alignItems: 'center', borderBottomWidth: 1, borderColor: '#8F90FC', borderBottomWidth: 2.5, borderColor: '#8F90FC', padding: 20}}>
+            <Text style={{fontSize: 17, color: 'white', fontWeight: '500'}}>{text}</Text>
+          </View>
+        </TouchableOpacity>
+      )
+    }else{
+      return (
+        <TouchableOpacity style={{flex: 1}} onPress={()=>this.onSelectHeaderTab('Trial')}>
+          <View style={{justifyContent: 'center', alignItems: 'center', padding: 20}}>
+            <Text style={{fontSize: 17, color: '#9B9AA6', fontWeight: '500'}}>{text}</Text>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+
+  }
+
+  renderTasksDetails1 = (tasks) => {
+    return (
+      <View style={{width: '95%', marginHorizontal: 10, marginBottom: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+        {
+          tasks.map((res, index)=>{
+            return (
+              <View key={index} style={{flexDirection: 'row', marginVertical: 5, justifyContent: 'center', alignItems: 'center'}}>
+                <Image source={require('../Assets/Donelisticon.png')} style={{height: 20, width: 20, resizeMode: 'stretch', marginTop: 5, marginLeft: 5, padding: 10}}/>
+                <View style={{flex: 1, marginLeft: 5}}>
+                  <TextInput placeholder='type task here..' editable={this.state.editableState} multiline={true} onChangeText={(value) => this.onChangeTask(value, key)} style={{fontSize: 15, color: '#393650', height: 50, padding: 10}}/>
+                </View>
+              </View>
+            )
+          })
+        }
+      </View>
+    )
+  }
+
+  renderTasksDetails2 = (tasks) => {
+    return (
+      <View style={{width: '95%', marginHorizontal: 10, marginBottom: 10, padding: 10, backgroundColor: 'white', borderRadius: 5, alignItems: 'flex-start', justifyContent: 'flex-start'}}>
+        {
+          tasks.map((res, index)=>{
+            return (
+              <View key={index} style={{flexDirection: 'row', marginVertical: 5, justifyContent: 'center', alignItems: 'center'}}>
+                <Icon name="ios-radio-button-on" size={10} color="#96E7EF" style={{marginRight: 10}}/>
+                <Text style={{color: '#22252C', fontSize: 13}}></Text>
+                <TextInput placeholder='type task here..' editable={this.state.editableState} multiline={true} onChangeText={(value) => this.onChangeTask(value, key)} value={res.description} style={{fontSize: 15, color: '#393650', height: 50, padding: 10}}/>
+              </View>
+            )
+          })
+        }
+      </View>
+    )
+  }
+
+  onSelectHeaderTab = (type) => {
+    if(type == 'Staff') {
+      this.setState({tabStaffSelected: true, tabTrialSelected: false});
+    }else {
+      this.setState({tabStaffSelected: false, tabTrialSelected: true});
+    }
+  }
+
+  onSelectStaffSchedule = () => {
+    this.setState({isShowStaffSchedule: true})
+  }
+
+  renderDeleteMonSched1 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showMonSched1: false, MonSched1: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteMonSched2 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showMonSched2: false, MonSched2: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteTueSched1 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showTueSched1: false, TueSched1: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteTueSched2 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showTueSched2: false, TueSched2: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteWedSched1 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showWedSched1: false, WedSched1: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteWedSched2 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showWedSched2: false, WedSched2: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteThuSched1 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showThuSched1: false, ThuSched1: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteThuSched2 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showThuSched2: false, ThuSched2: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteFriSched1 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showFriSched1: false, FriSched1: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteFriSched2 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showFriSched2: false, FriSched2: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteSatSched1 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showSatSched1: false, SatSched1: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteSatSched2 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showSatSched2: false, SatSched2: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteSunSched1 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showSunSched1: false, SunSched1: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+  renderDeleteSunSched2 = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({showSunSched2: false, SunSched2: ''})} style={{position: 'absolute'}}>
+          <View style={{borderRadius: 7, width: 14, height: 14, backgroundColor: '#5453B5', alignItems: 'center', left: 48, top: -5}}>
+            <Icon name='md-close' size={14} color='white' style={{backgroundColor: 'transparent'}}/>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  renderMondaySched1 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.MonSched1} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showMonSched1) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.MonSched1} onChangeText={(text) => this.setState({MonSched1: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteMonSched1()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showMonSched1: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderMondaySched2 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.MonSched2} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showMonSched2) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.MonSched2} onChangeText={(text) => this.setState({MonSched2: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteMonSched2()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showMonSched2: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderTuesdaySched1 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.TueSched1} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showTueSched1) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.TueSched1} onChangeText={(text) => this.setState({TueSched1: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteTueSched1()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showTueSched1: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderTuesdaySched2 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.TueSched2} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showTueSched2) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.TueSched2} onChangeText={(text) => this.setState({TueSched2: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteTueSched2()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showTueSched2: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderWednesdaySched1 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.WedSched1} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showWedSched1) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.WedSched1} onChangeText={(text) => this.setState({WedSched1: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteWedSched1()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showWedSched1: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderWednesdaySched2 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.WedSched2} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showWedSched2) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.WedSched2} onChangeText={(text) => this.setState({WedSched2: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteWedSched2()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showWedSched2: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderThursdaySched1 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.ThuSched1} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showThuSched1) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.thuSched1} onChangeText={(text) => this.setState({ThuSched1: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteThuSched1()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showThuSched1: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderThursdaySched2 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.ThuSched2} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showThuSched2) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.ThuSched2} onChangeText={(text) => this.setState({ThuSched2: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteThuSched2()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showThuSched2: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderFridaySched1 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.FriSched1} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showFriSched1) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.FriSched1} onChangeText={(text) => this.setState({FriSched1: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteFriSched1()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showFriSched1: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderFridaySched2 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.FriSched2} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showFriSched2) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.FriSched2} onChangeText={(text) => this.setState({FriSched2: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteFriSched2()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showFriSched2: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderSaturdaySched1 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.SatSched1} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showSatSched1) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.SatSched1} onChangeText={(text) => this.setState({SatSched1: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteSatSched1()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showSatSched1: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderSaturdaySched2 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.SatSched2} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showSatSched2) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.SatSched2} onChangeText={(text) => this.setState({SatSched2: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteSatSched2()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showSatSched2: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderSundaySched1 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.SunSched1} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showSunSched1) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.SunSched1} onChangeText={(text) => this.setState({SunSched1: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteSunSched1()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showSunSched1: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+  renderSundaySched2 = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+          <TextInput value={this.state.SunSched2} editable={false} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+        </View>
+      )
+    }else if (!this.state.isShowEditButton) {
+      if (this.state.showSunSched2) {
+        return(
+          <View style={{flex: 1, marginLeft: 8, paddingVertical: 10, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+            <TextInput value={this.state.SunSched2} onChangeText={(text) => this.setState({SunSched2: text})} editable={true} style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+            {this.renderDeleteSunSched2()}
+          </View>
+        )
+      }else {
+        return(
+          <View style={{flex: 1, margin: 2, paddingVertical: 10, alignItems: 'flex-start'}}>
+            <TouchableOpacity onPress={()=> this.setState({showSunSched2: true})}>
+              <Image source={require('../Assets/plusiconcalendar.png')} style={{width: 20, height: 20, resizeMode: 'stretch', marginLeft: 6}}/>
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    }
+  }
+
+  renderEditButton = () => {
+    if (this.state.isShowEditButton) {
+      return(
+        <TouchableOpacity onPress={() => this.setState({isShowEditButton: false})} style={{position: 'absolute'}}>
+          <Image source={require('../Assets/editiconpopup.png')} style={{height: 35, width: 35, resizeMode: 'stretch', top: -660}}/>
+        </TouchableOpacity>
+      )
+    }
+  }
+
+  renderSaveButtton = () => {
+    if (!this.state.isShowEditButton) {
+      return(
+        <ZRoundedButton name="Save" styles={{marginRight: 20}} normalButtonStyle={{backgroundColor: '#64DAE7', width: 140, alignSelf: 'center'}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.setState({isShowEditButton: true})} />
+      )
+    }
+  }
+
+  renderContent = () => {
+    const { navigate } = this.props.navigation;
+    if(this.state.tabStaffSelected && !this.state.tabTrialSelected && !this.state.isTrialShow) {
+      return (
+        <ScrollView style={styles.container} contentContainerStyle={[styles.scrollContent, {top: 0, paddingBottom: 50}]}>
+          <ZHeaderTab
+            leftIcon="ios-arrow-round-back-outline"
+            leftIconColor="white"
+            leftIconPress={()=>this.props.navigation.goBack()}>
+
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              {this.renderHeaderTabStaff('Active Staff (23)')}
+              {this.renderHeaderTabTrial('Trial Period (5)')}
+            </View>
+
+          </ZHeaderTab>
+
+          <View style={styles.plainBody}>
+
+            <ZMuteText text="TO" styles={{textAlign: 'left'}}/>
+
+            <ZSliderCard>
+
+              <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')} photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Bartenders" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')} photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Manager" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/waitericonselected.png')} photoUrlUnSelected={require('../Assets/waitericon.png')} iconText="Waiter" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/cookiconselected.png')} photoUrlUnSelected={require('../Assets/cookicon.png')} iconText="Kitchen" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/barbackiconselected.png')} photoUrlUnSelected={require('../Assets/barbackicon.png')} iconText="Barbacks" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/hosticonselected.png')} photoUrlUnSelected={require('../Assets/hosticon.png')} iconText="Host" isSelected={this.state.selected}  />
+
+            </ZSliderCard>
+
+
+          </View>
+
+
+          <View style={styles.cardBody}>
+            {
+              this.state.data1.map((res, index)=>{
+                return (
+                  <ZCard key={index} styles={{borderWidth: 0, backgroundColor: 'white', margin: 5}}>
+                    <TouchableOpacity onPress={() => this.setState({isTrialShow: true, isActiveContent: true, selectedStaff: res})}>
+                      <ZAvatar small={true} hideIndicator={true} />
+                      <ZText text={res.staff.fullname} styles={{fontSize: 14}}/>
+                    </TouchableOpacity>
+                    <ZRater />
+                    <ZMuteText text="Full time" />
+                    <ZMuteText text={res.staff.rateBadge} />
+                    <View style={{marginVertical: 10}}>
+                      <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA"  />
+                    </View>
+
+                    <TouchableOpacity onPress={() => navigate('MonthlyReview')}>
+                      <View style={{borderBottomWidth: 1, borderColor: '#5F5FBA'}}>
+                        <Text style={{color: '#5F5FBA', fontSize: 13}}>Add monthly review</Text>
+                      </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => this.onSelectStaffSchedule()} style={{position: 'absolute', top: 20, right: 10}}>
+                      <View>
+                        <Icon name="md-calendar" size={30} color="#716D7B"  />
+                      </View>
+                    </TouchableOpacity>
+                  </ZCard>
+                )
+              })
+            }
+
+          </View>
+          <Modal
+            transparent={true}
+            animationType='slide'
+            visible={this.state.isShowStaffSchedule}
+          >
+          <View style={{flex: 1}}>
+            <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, opacity: 0.9, backgroundColor: 'white'}} />
+
+            <View style={{flex: 1}}>
+              <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 10}}>
+                <Image style={{width: 60, height: 60, borderRadius: 30}} source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}/>
+
+                <View style={{justifyContent: 'center', alignItems: 'center', margin: 10}}>
+                  <ZText text="Andrew O." styles={{marginTop: 1, fontSize: 18, fontWeight: 'bold'}}/>
+                </View>
+
+              </View>
+
+              <View style={{flex: 1}}>
+                <View style={{backgroundColor: 'white', marginBottom: 10, marginTop: 0, borderRadius: 5}}>
+                  <View style={{marginVertical: 20, padding: 15}}>
+                    <View style={{flexDirection: 'row', marginBottom: 15}}>
+                      <View style={{margin: 5, paddingVertical: 10, width: 100}}>
+                        <Text>Monday</Text>
+                      </View>
+                      {this.renderMondaySched1()}
+                      {this.renderMondaySched2()}
+                    </View>
+                    <View style={{flexDirection: 'row', marginBottom: 15}}>
+                      <View style={{margin: 5, paddingVertical: 10, width: 100}}>
+                        <Text>Tuesday</Text>
+                      </View>
+                      {this.renderTuesdaySched1()}
+                      {this.renderTuesdaySched2()}
+                    </View>
+                    <View style={{flexDirection: 'row', marginBottom: 15}}>
+                      <View style={{margin: 5, paddingVertical: 10, width: 100}}>
+                        <Text>Wednesday</Text>
+                      </View>
+                      {this.renderWednesdaySched1()}
+                      {this.renderWednesdaySched2()}
+                    </View>
+                    <View style={{flexDirection: 'row', marginBottom: 15}}>
+                      <View style={{margin: 5, paddingVertical: 10, width: 100}}>
+                        <Text>Thursday</Text>
+                      </View>
+                      {this.renderThursdaySched1()}
+                      {this.renderThursdaySched2()}
+                    </View>
+                    <View style={{flexDirection: 'row', marginBottom: 15}}>
+                      <View style={{margin: 5, paddingVertical: 10, width: 100}}>
+                        <Text>Friday</Text>
+                      </View>
+                      {this.renderFridaySched1()}
+                      {this.renderFridaySched2()}
+                    </View>
+                    <View style={{flexDirection: 'row', marginBottom: 15}}>
+                      <View style={{margin: 5, paddingVertical: 10, width: 100}}>
+                        <Text>Saturday</Text>
+                      </View>
+                      {this.renderSaturdaySched1()}
+                      {this.renderSaturdaySched2()}
+                    </View>
+                    <View style={{flexDirection: 'row', marginBottom: 15}}>
+                      <View style={{margin: 5, paddingVertical: 10, width: 100}}>
+                        <Text>Sunday</Text>
+                      </View>
+                      {this.renderSundaySched1()}
+                      {this.renderSundaySched2()}
+                    </View>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'flex-start', top: 150}}>
+                      {this.renderEditButton()}
+                    </View>
+                    <View style={{flex: 1, alignItems: 'flex-end'}}>
+                      <TouchableOpacity onPress={() => this.setState({isShowStaffSchedule: false})} style={{position: 'absolute'}}>
+                        <View style={{backgroundColor: '#F5F5F5', margin: 10, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', top: -520}}>
+                          <Icon name='ios-close-outline' size={35} style={{backgroundColor: 'transparent'}}/>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={{marginBottom: 20, alignItems: 'center'}}>
+                    {this.renderSaveButtton()}
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+          </Modal>
+        </ScrollView>
+      )
+    }else if(!this.state.tabStaffSelected && this.state.tabTrialSelected && !this.state.isTrialShow) {
+      return (
+        <ScrollView style={styles.container} contentContainerStyle={[styles.scrollContent, {top: 0, paddingBottom: 50}]}>
+
+          <ZHeaderTab
+            leftIcon="ios-arrow-round-back-outline"
+            leftIconColor="white"
+            leftIconPress={()=>this.props.navigation.goBack()}>
+
+            <View style={{flex: 1, flexDirection: 'row'}}>
+              {this.renderHeaderTabStaff('Active Staff (23)')}
+              {this.renderHeaderTabTrial('Trial Period (5)')}
+            </View>
+
+          </ZHeaderTab>
+
+          <View style={styles.plainBody}>
+
+            <ZMuteText text="TO" styles={{textAlign: 'left'}}/>
+
+            <ZSliderCard>
+
+              <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')} photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Bartenders" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')} photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Manager" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/waitericonselected.png')} photoUrlUnSelected={require('../Assets/waitericon.png')} iconText="Waiter" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/cookiconselected.png')} photoUrlUnSelected={require('../Assets/cookicon.png')} iconText="Kitchen" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/barbackiconselected.png')} photoUrlUnSelected={require('../Assets/barbackicon.png')} iconText="Barbacks" isSelected={this.state.selected}  />
+              <ZIcon photoUrlSelected={require('../Assets/hosticonselected.png')} photoUrlUnSelected={require('../Assets/hosticon.png')} iconText="Host" isSelected={this.state.selected}  />
+
+            </ZSliderCard>
+
+
+          </View>
+
+
+          <View style={styles.cardBody}>
+            {
+              this.state.data2.map((res, index)=>{
+                return (
+                  <ZCard key={index} styles={{borderWidth: 0, backgroundColor: 'white', margin: 5}}>
+                    <TouchableOpacity onPress={() => this.setState({isTrialShow: true, isActiveContent: false, selectedStaff: res})}>
+                      <ZAvatar source={res.staff.avatar} hideIndicator={true} />
+                      <ZText text={res.staff.fullname} styles={{fontSize: 14}}/>
+                    </TouchableOpacity>
+                    <ZRater />
+                    <ZMuteText text="Full time" />
+                    <ZMuteText text={res.staff.rateBadge} />
+                    <View style={{marginVertical: 10}}>
+                      <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA"  />
+                    </View>
+
+                    <TouchableOpacity onPress={() => navigate('MonthlyReview')}>
+                      <View style={{borderBottomWidth: 1, borderColor: '#5F5FBA'}}>
+                        <Text style={{color: '#5F5FBA', fontSize: 13}}>Add monthly review</Text>
+                      </View>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => this.onSelectStaffSchedule()} style={{position: 'absolute', top: 20, right: 10}}>
+                      <View>
+                        <Icon name="md-calendar" size={30} color="#716D7B"  />
+                      </View>
+                    </TouchableOpacity>
+                  </ZCard>
+                )
+              })
+            }
+
+          </View>
+          <Modal
+            transparent={true}
+            animationType='slide'
+            visible={this.state.isShowStaffSchedule}
+          >
+          <View style={{flex: 1}}>
+            <View style={{position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, opacity: 0.9, backgroundColor: 'white'}} />
+
+            <View style={{flex: 1}}>
+              <View style={{alignItems: 'center', justifyContent: 'center', marginTop: 50}}>
+                <Image style={{width: 60, height: 60, borderRadius: 30}} source={{uri: 'https://facebook.github.io/react/img/logo_og.png'}}/>
+
+                <View style={{justifyContent: 'center', alignItems: 'center', margin: 10}}>
+                  <ZText text="Andrew O." styles={{marginTop: 1, fontSize: 18, fontWeight: 'bold'}}/>
+                </View>
+
+              </View>
+
+              <View style={{flex: 1}}>
+                <View style={{backgroundColor: 'white', margin: 15, marginTop: 0, borderRadius: 5}}>
+                  <View style={{marginVertical: 20, padding: 15}}>
+                    <View style={{flexDirection: 'row', marginBottom: 20}}>
+                      <View style={{margin: 2, paddingVertical: 15, width: 100}}>
+                        <Text>Monday</Text>
+                      </View>
+                      {this.renderMondaySched1()}
+                      <View style={{flex: 1, marginLeft: 5, paddingVertical: 15, alignItems: 'center', backgroundColor: '#F5F5F5'}}>
+                        <TextInput value="8 AM - 4 PM" style={{width: '100%', fontSize: 14, textAlign: 'center'}}/>
+                      </View>
+                    </View>
+
+                    <View style={{flexDirection: 'column'}}>
+
+                    </View>
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <View style={{flex: 1, alignItems: 'flex-start', top: 150}}>
+                      {this.renderEditButton()}
+                    </View>
+                    <View style={{flex: 1, alignItems: 'flex-end'}}>
+                      <TouchableOpacity onPress={() => this.setState({isShowStaffSchedule: false})} style={{position: 'absolute'}}>
+                        <View style={{backgroundColor: '#F5F5F5', margin: 10, width: 35, height: 35, borderRadius: 30, alignItems: 'center', justifyContent: 'center', top: 300}}>
+                          <Icon name='ios-close-outline' size={35} style={{backgroundColor: 'transparent'}}/>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                  <View style={{marginBottom: 30, alignItems: 'center', borderWidth: 0.5}}>
+                    {this.renderSaveButtton()}
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+          </Modal>
+        </ScrollView>
+      )
+    }
+    else {
+      if (this.state.isActiveContent) {
+        return (
+          <ScrollView style={styles.container} contentContainerStyle={[styles.scrollContent, {top: 0, paddingBottom: 50}]}>
+
+            <ZHeader
+              headerTitle="Active Staff"
+              titleStyle={{fontSize: 16, fontWeight: '500'}}
+              leftIcon="ios-arrow-round-back-outline"
+              leftIconColor="white"
+              leftIconPress={()=>this.props.navigation.goBack()}
+            />
+
+            <View style={styles.body}>
+              <View style={{flexDirection: 'row', marginRight: 10, alignItems: 'center', justifyContent: 'center'}}>
+                <Icon name="md-calendar" size={25} color="#716D7B" style={{padding: 5}}  />
+                <ZMuteText text={moment(this.state.selectedStaff.hiredDate).format('DD MMM')} />
+              </View>
+
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 15}}>
+
+                <View style={{flex: 1}}>
+                  <ZAvatar small={true} hideIndicator={true} />
+                  <ZText text={this.props.navigation.state.params.userData.employer.name} styles={{fontSize: 14}}/>
+                </View>
+
+                <View style={{flex: 1}}>
+                  <ZAvatar small={true} hideIndicator={true} />
+                  <ZText text={this.state.selectedStaff.staff.fullname} styles={{fontSize: 14}}/>
+                </View>
+
+              </View>
+            </View>
+
+            <View style={styles.body}>
+              <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 5}}>
+                  <TouchableOpacity onPress={() => this.onButtonPress()}>
+                    <Image source={require('../Assets/editiconpopup.png')} style={{height: 25, width: 25, resizeMode: 'stretch'}}/>
+                  </TouchableOpacity>
+                </View>
+                <Text style={{fontSize: 16, color: '#818181'}}>Edit</Text>
+              </View>
+              <View style={{justifyContent: 'center', alignItems: 'center', marginBottom: 20}}>
+                <Text style={{fontSize: 20, fontWeight: 'bold', color: '#33304B'}}>Todays Tasks</Text>
+              </View>
+              <View>
+                {this.renderTasksDetails1(this.state.selectedStaff.tasks)}
+              </View>
+            </View>
+
+            <View style={styles.body}>
+              <ZHero text="Overall Rating 85/100" styles={{color: '#33314B', fontWeight:'normal', fontSize: 16}}/>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 20, marginLeft: 20}}>
+
+                <ZIcon photoUrlSelected={require('../Assets/languageiconselected.png')} photoUrlUnSelected={require('../Assets/languageicon.png')} iconText="Languages" isSelected={false}  />
+                <ZIcon photoUrlSelected={require('../Assets/cardidicon.png')} photoUrlUnSelected={require('../Assets/cardidicon.png')} iconText="Licence" isSelected={false}  />
+                <ZIcon photoUrlSelected={require('../Assets/Certificatesiconselected.png')} photoUrlUnSelected={require('../Assets/Certificatesicon.png')} iconText="Certificates" isSelected={true}  />
+                <ZIcon photoUrlSelected={require('../Assets/cardvideoicon.png')} photoUrlUnSelected={require('../Assets/cardvideoicon.png')} iconText="Videos" isSelected={false}  />
+
+              </View>
+            </View>
+
+          </ScrollView>
+        );
+      }else {
+        return (
+          <ScrollView style={styles.container} contentContainerStyle={[styles.scrollContent, {top: 0, paddingBottom: 50}]}>
+
+            <ZHeader
+              headerTitle="Trial Period"
+              titleStyle={{fontSize: 16, fontWeight: '500'}}
+              leftIcon="ios-arrow-round-back-outline"
+              leftIconColor="white"
+              leftIconPress={()=>this.props.navigation.goBack()}
+            />
+
+            <View style={styles.body}>
+              <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                <View style={{flexDirection: 'row', marginRight: 10, alignItems: 'center', justifyContent: 'center'}}>
+                  <Icon name="md-calendar" size={25} color="#716D7B" style={{padding: 5}}  />
+                  <ZMuteText text={moment(this.state.selectedStaff.trialStartDate).format('DD MMM')} />
+                </View>
+
+                <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
+                  <Icon name="md-calendar" size={25} color="#716D7B" style={{padding: 5}}  />
+                  <ZMuteText text={moment(this.state.selectedStaff.trialEndDate).format('DD MMM')} />
+                </View>
+              </View>
+
+              <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 15}}>
+
+                <View style={{flex: 1}}>
+                  <ZAvatar small={true} hideIndicator={true} />
+                  <ZText text={this.props.navigation.state.params.userData.employer.name} styles={{fontSize: 14}}/>
+                </View>
+
+                <View style={{flex: 1}}>
+                  <ZAvatar small={true} hideIndicator={true} />
+                  <ZText text={this.state.selectedStaff.staff.fullname} styles={{fontSize: 14}}/>
+                </View>
+
+              </View>
+
+              <View style={styles.body2}>
+                <ZHero text="Today's Tasks" styles={{color: '#33314B', marginRight: 10}}/>
+                {this.renderTaskSuggest()}
+                {this.renderTasksDetails2(this.state.selectedStaff.tasks)}
+                {this.renderTaskButton()}
+                {this.renderSuggestButton()}
+              </View>
+
+            </View>
+
+            <View style={styles.body}>
+              <ZHero text="Overall Rating 85/100" styles={{color: '#33314B', fontWeight:'normal', fontSize: 16}}/>
+              <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 20, marginLeft: 20}}>
+
+                <ZIcon photoUrlSelected={require('../Assets/languageiconselected.png')} photoUrlUnSelected={require('../Assets/languageicon.png')} iconText="Languages" isSelected={false}  />
+                <ZIcon photoUrlSelected={require('../Assets/cardidicon.png')} photoUrlUnSelected={require('../Assets/cardidicon.png')} iconText="Licence" isSelected={false}  />
+                <ZIcon photoUrlSelected={require('../Assets/Certificatesiconselected.png')} photoUrlUnSelected={require('../Assets/Certificatesicon.png')} iconText="Certificates" isSelected={true}  />
+                <ZIcon photoUrlSelected={require('../Assets/cardvideoicon.png')} photoUrlUnSelected={require('../Assets/cardvideoicon.png')} iconText="Videos" isSelected={false}  />
+
+              </View>
+            </View>
+
+          </ScrollView>
+        );
+      }
+    }
+  }
+
+  render() {
+    return (
+      <View style={{flex: 1}}>
+        {this.renderContent()}
+      </View>
+    )
+  }
+
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
+  scrollContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    bottom: 50
+  },
+  heading: {
+    backgroundColor: 'purple',
+    padding: 10,
+    paddingTop: 25,
+    width: '100%',
+    alignItems: 'center'
+  },
+  headingText: {
+    color: '#FFFFFF',
+  },
+  body: {
+    flex: 1,
+    backgroundColor: 'white',
+    width: '100%',
+    paddingTop: 20,
+    paddingBottom: 5,
+    paddingHorizontal: 20,
+    marginBottom: 10
+  },
+  body2: {
+    flex: 1,
+    backgroundColor: 'white',
+    width: '95%',
+    paddingTop: 10,
+    marginBottom: 10,
+    marginHorizontal: 10
+  },
+  body3: {
+    flex: 1,
+    backgroundColor: 'white',
+    width: '100%',
+    paddingTop: 20,
+    paddingHorizontal: 20,
+    marginBottom: 10
+  },
+  plainBody: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    width: '100%',
+    paddingBottom: 5,
+    paddingTop: 10,
+    paddingHorizontal: 10
+  },
+  cardBody: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    marginVertical: 15,
+    marginLeft: 2
+  },
+  footer: {
+    padding: 10,
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF'
+  }
+});
+
+--- VENUE STAFF ---
