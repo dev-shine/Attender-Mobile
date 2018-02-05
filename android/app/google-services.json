@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "998846623025",
+    "project_id": "firebase-attender"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:998846623025:android:78df93db24c2907c",
+        "android_client_info": {
+          "package_name": "com.attender"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "998846623025-ckklfev21vorst79t5b7laa2dorpl2gh.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "998846623025-fuo1br7npboivpmus985jni1vj6obcos.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.attender",
+            "certificate_hash": "4569e504d1e1d4145cc660b4c67f1b104d876dff"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdLXrdkfmLdlXwmYnrTcBlzqhzEIBOZQw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
