@@ -146,12 +146,13 @@ export default class TotalAvailableBalance extends Component {
   }
 
   onPressWithdraw = () => {
+    let bank = this.state.bankArray[this.state.bankIndex]
     if (!this.state.withdrawMultiple) {
-      API.post('withdraw', {account_id: this.state.withdrawToId, amount: this.state.withdrawAmount}).then((res) => {
+      API.post('withdraw', {account_id: bank.promiseId, amount: this.state.withdrawAmount}).then((res) => {
         console.log('withdraw',res);
         if (res.status) {
           if (!this.state.isShowConfirmWithdraw) {
-            this.setState({isShowConfirmWithdraw: true, withdrawMultiple: true});
+            this.setState({isShowConfirmWithdraw: true, withdrawMultiple: true, withdrawTo:bank.bankMeta.bank_name, accountNumber: bank.bankMeta.account_number});
           }
         } else {
           alert('Something went wrong!', res);
@@ -201,6 +202,7 @@ export default class TotalAvailableBalance extends Component {
   }
 
   renderConfirmWithdraw = () => {
+
       return(
         <Modal
           animationType={"fade"}
