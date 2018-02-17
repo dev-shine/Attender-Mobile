@@ -41,6 +41,7 @@ export default class Default extends Component {
       isShowTrialEvent: false
     }
 
+    console.log(props.navigation.state.params.staff)
     this._isMounted = false;
     this._isAlright = null;
   }
@@ -275,12 +276,15 @@ export default class Default extends Component {
   }
 // https://avatarfiles.alphacoders.com/826/82656.png
   renderGroupUser = () => {
+      let fullname = this.props.navigation.state.params.staff.user.fullname == undefined ? this.props.navigation.state.params.staff.fullname: this.props.navigation.state.params.staff.user.fullname
+    let position = this.props.navigation.state.params.staff.position
+      let positions = position ? position.join(",") : ""
     return (
       <View style={{flex: 1, flexDirection: 'row'}}>
         {this.renderAvatar()}
         <View style={{position: 'absolute', top: 30, left: 80}}>
-          <Text style={{fontSize: 18, fontWeight: 'bold', color: 'white' , backgroundColor: 'transparent'}}>{this.state.newMessage ? this.props.navigation.state.params.staff.user.fullname : this.state.messageDetails.uname}</Text>
-          <Text style={{fontSize: 12, fontWeight: '400', color: '#9D9BA6', backgroundColor: 'transparent'}}>{this.props.navigation.state.params.venue}</Text>
+          <Text style={{fontSize: 18, fontWeight: 'bold', color: 'white' , backgroundColor: 'transparent'}}>{this.state.newMessage ? fullname : this.state.messageDetails.uname}</Text>
+          <Text style={{fontSize: 12, fontWeight: '400', color: '#9D9BA6', backgroundColor: 'transparent'}}>{positions} {this.props.navigation.state.params.venue}</Text>
         </View>
 
       </View>
@@ -349,7 +353,10 @@ export default class Default extends Component {
   }
 
   renderGiveTrial = () => {
-    return(
+      let fullname = this.props.navigation.state.params.staff.user.fullname == undefined ? this.props.navigation.state.params.staff.fullname: this.props.navigation.state.params.staff.user.fullname
+
+      console.log(fullname)
+      return(
       <Modal
         transparent={true}
         animationType='slide'
@@ -369,7 +376,7 @@ export default class Default extends Component {
           </View>
             <View style={{marginBottom: 15}}>
               <ZText text="Would you like to give" styles={{color: '#727272', backgroundColor: 'transparent', marginTop: 1, fontSize: 18, fontWeight: '500'}}/>
-              <ZText text={(this.state.newMessage ? this.props.navigation.state.params.staff.user.fullname : this.state.messageDetails.uname) + " a trial?"} styles={{color: '#727272', marginTop: 1, fontSize: 18, fontWeight: '500'}}/>
+              <ZText text={(this.state.newMessage ? fullname : this.state.messageDetails.uname) + " a trial?"} styles={{color: '#727272', marginTop: 1, fontSize: 18, fontWeight: '500'}}/>
             </View>
             <View>
               <ZText text="Alternatively, you can skip the trial process" styles={{color: '#727272', marginTop: 1, fontSize: 12}}/>
