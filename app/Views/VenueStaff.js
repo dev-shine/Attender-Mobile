@@ -196,10 +196,15 @@ export default class VenueStaff extends Component {
   // }
 
   getConversationId = (userProfile, myProfile) => {
-    API.get(`open-convo/${userProfile.user}`).then((res) => {
+    let profile = userProfile;
+    if(userProfile instanceof Array){
+      profile = userProfile[0]
+    }
+    console.log("VenueStaff",profile)
+    API.get(`open-convo/${profile.staff.user}`).then((res) => {
       console.log(res);
       if (res.status) {
-        this.props.navigation.navigate('ChatBox', {messageDetails: {usid: userProfile.user,  uselect: userProfile.id, _id: res.conversation}, staff: userProfile, userData: myProfile, type: 'Venue', newMessage: true})
+        this.props.navigation.navigate('ChatBox', {messageDetails: {usid: profile.staff.user,  uselect: profile.staff._id, _id: res.conversation}, staff: profile.staff, userData: myProfile, type: 'Venue', newMessage: true})
       }
     });
   }
@@ -2104,6 +2109,8 @@ export default class VenueStaff extends Component {
   }
 
   renderManager = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2118,7 +2125,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2148,6 +2155,8 @@ export default class VenueStaff extends Component {
   }
 
   renderWaiter = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2162,7 +2171,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2192,6 +2201,8 @@ export default class VenueStaff extends Component {
   }
 
   renderChef = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2206,7 +2217,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2236,6 +2247,8 @@ export default class VenueStaff extends Component {
   }
 
   renderKitchen = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2250,7 +2263,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2280,6 +2293,8 @@ export default class VenueStaff extends Component {
   }
 
   renderBarback = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2294,7 +2309,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2324,6 +2339,8 @@ export default class VenueStaff extends Component {
   }
 
   renderHost = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2338,7 +2355,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2368,6 +2385,8 @@ export default class VenueStaff extends Component {
   }
 
   renderBartender2 = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2382,7 +2401,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2406,6 +2425,8 @@ export default class VenueStaff extends Component {
   }
 
   renderManager2 = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2420,7 +2441,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2444,6 +2465,8 @@ export default class VenueStaff extends Component {
   }
 
   renderWaiter2 = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2458,7 +2481,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2482,6 +2505,8 @@ export default class VenueStaff extends Component {
   }
 
   renderChef2 = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2496,7 +2521,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2520,6 +2545,8 @@ export default class VenueStaff extends Component {
   }
 
   renderKitchen2 = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2534,7 +2561,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2558,6 +2585,8 @@ export default class VenueStaff extends Component {
   }
 
   renderBarback2 = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2572,7 +2601,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
@@ -2596,6 +2625,8 @@ export default class VenueStaff extends Component {
   }
 
   renderHost2 = () => {
+    let myProfile = this.state.userData;
+
     return(
       <View style={styles.cardBody}>
         {
@@ -2610,7 +2641,7 @@ export default class VenueStaff extends Component {
                 <ZMuteText text={res.staff.frequency} />
                 <ZMuteText text={res.staff.rateBadge} />
                 <View style={{marginVertical: 10}}>
-                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res)} />
+                  <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA" onPress={() => this.getConversationId(res, myProfile)} />
                 </View>
 
                 <TouchableOpacity onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
