@@ -32,6 +32,7 @@ import {
 import {
   StackNavigator,
 } from 'react-navigation';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 
 var {height, width} = Dimensions.get('window');
 
@@ -49,7 +50,11 @@ export default class TrialPeriod extends Component {
       prev: false,
       isShowConfirmation: false,
       accName: '',
-      accNumber: ''
+      accNumber: '',
+      isShowEditButton: true,
+      currentTime: new Date(),
+      type: '',
+      isTimePicker: false
     }
   }
 
@@ -123,6 +128,152 @@ export default class TrialPeriod extends Component {
     })
   }
 
+  onShowTimePicker = (type, startOrEnd, currentTime) => {
+    this.setState({isTimePicker: true, type: type, startOrEnd: startOrEnd, currentTime: currentTime});
+  }
+
+
+  timeFormatter = (time) => {
+    if (time != '') {
+      return moment(time).format('hh A');
+    } else {
+      return time;
+    }
+  }
+
+  onSelectTime = (time) => {
+    switch (this.state.type) {
+      case 'Monday1':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({monstartTime1: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({monendTime1: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Monday2':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({monstartTime2: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({monendTime2: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Tuesday1':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({tuestartTime1: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({tueendTime1: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Tuesday2':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({tuestartTime2: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({tueendTime2: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Wednesday1':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({wedstartTime1: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({wedendTime1: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Wednesday2':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({wedstartTime2: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({wedendTime2: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Thursday1':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({thustartTime1: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({thuendTime1: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Thursday2':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({thustartTime2: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({thuendTime2: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Friday1':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({fristartTime1: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({friendTime1: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Friday2':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({fristartTime2: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({friendTime2: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Saturday1':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({satstartTime1: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({satendTime1: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Saturday2':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({satstartTime2: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({satendTime2: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Sunday1':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({sunstartTime1: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({sunendTime1: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      case 'Sunday2':
+      {
+        if(this.state.startOrEnd == 'start'){
+          this.setState({sunstartTime2: this.timeFormatter(time), isTimePicker: false});
+        }else {
+          this.setState({sunendTime2: this.timeFormatter(time), isTimePicker: false});
+        }
+      }
+        break;
+      default:
+
+    }
+
+  }
   renderConfirmTransfer = () => {
     let props = this.props.navigation.state.params.props;
     let timesheet = this.state.timesheet;
@@ -187,9 +338,23 @@ export default class TrialPeriod extends Component {
                       res.schedules.map((schedule, id) => {
                         return (
                           <View key={id} style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 3}}>
-                            <View style={{flex: 2}}>
-                              <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
-                            </View>
+                              { this.state.isShowEditButton ?
+                              <View style={{flex: 2, flexDirection: 'row', margin: "auto", paddingVertical: 5, alignItems: 'center'}}>
+                                <View>
+                                    <TouchableOpacity onPress={()=>this.onShowTimePicker('Monday'+id+1, 'start', schedule.startTime)}>
+                                      <ZMuteText text={schedule.startTime + ' - '} />
+                                    </TouchableOpacity>
+                                </View>
+                                <View>
+                                  <TouchableOpacity onPress={()=>this.onShowTimePicker('Monday1'+id+1, 'end', schedule.endTime)}>
+                                    <ZMuteText text={schedule.endTime} />
+                                  </TouchableOpacity>
+                                </View>
+                              </View>:
+                              <View style={{flex: 2}}>
+                                  <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
+                              </View>
+                              }
                             <View style={{flex: 1}}>
                               <Text style={{fontSize: 14, color: '#79787D', fontWeight: '400', textAlign: 'center'}}>{schedule.break}</Text>
                             </View>
@@ -218,9 +383,23 @@ export default class TrialPeriod extends Component {
                       res.schedules.map((schedule, id) => {
                         return (
                           <View key={id} style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 3}}>
-                            <View style={{flex: 2}}>
-                              <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
-                            </View>
+                        { this.state.isShowEditButton ?
+                        <View style={{flex: 2, flexDirection: 'row', margin: "auto", paddingVertical: 5, alignItems: 'center'}}>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Tuesday'+id+1, 'start', schedule.startTime)}>
+                        <ZMuteText text={schedule.startTime + ' - '} />
+                        </TouchableOpacity>
+                        </View>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Tuesday'+id+1, 'end', schedule.endTime)}>
+                        <ZMuteText text={schedule.endTime} />
+                        </TouchableOpacity>
+                        </View>
+                        </View>:
+                        <View style={{flex: 2}}>
+                        <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
+                        </View>
+                        }
                             <View style={{flex: 1}}>
                               <Text style={{fontSize: 14, color: '#79787D', fontWeight: '400', textAlign: 'center'}}>{schedule.break}</Text>
                             </View>
@@ -249,9 +428,23 @@ export default class TrialPeriod extends Component {
                       res.schedules.map((schedule, id) => {
                         return (
                           <View key={id} style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 3}}>
-                            <View style={{flex: 2}}>
-                              <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
-                            </View>
+                        { this.state.isShowEditButton ?
+                        <View style={{flex: 2, flexDirection: 'row', margin: "auto", paddingVertical: 5, alignItems: 'center'}}>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Wednesday'+id+1, 'start', schedule.startTime)}>
+                        <ZMuteText text={schedule.startTime + ' - '} />
+                        </TouchableOpacity>
+                        </View>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Wednesday'+id+1, 'end', schedule.endTime)}>
+                        <ZMuteText text={schedule.endTime} />
+                        </TouchableOpacity>
+                        </View>
+                        </View>:
+                        <View style={{flex: 2}}>
+                        <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
+                        </View>
+                        }
                             <View style={{flex: 1}}>
                               <Text style={{fontSize: 14, color: '#79787D', fontWeight: '400', textAlign: 'center'}}>{schedule.break}</Text>
                             </View>
@@ -280,9 +473,23 @@ export default class TrialPeriod extends Component {
                       res.schedules.map((schedule, id) => {
                         return (
                           <View key={id} style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 3}}>
-                            <View style={{flex: 2}}>
-                              <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
-                            </View>
+                        { this.state.isShowEditButton ?
+                        <View style={{flex: 2, flexDirection: 'row', margin: "auto", paddingVertical: 5, alignItems: 'center'}}>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Thursday'+id+1, 'start', schedule.startTime)}>
+                        <ZMuteText text={schedule.startTime + ' - '} />
+                        </TouchableOpacity>
+                        </View>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Thursday'+id+1, 'end', schedule.endTime)}>
+                        <ZMuteText text={schedule.endTime} />
+                        </TouchableOpacity>
+                        </View>
+                        </View>:
+                        <View style={{flex: 2}}>
+                        <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
+                        </View>
+                        }
                             <View style={{flex: 1}}>
                               <Text style={{fontSize: 14, color: '#79787D', fontWeight: '400', textAlign: 'center'}}>{schedule.break}</Text>
                             </View>
@@ -311,9 +518,23 @@ export default class TrialPeriod extends Component {
                       res.schedules.map((schedule, id) => {
                         return (
                           <View key={id} style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 3}}>
-                            <View style={{flex: 2}}>
-                              <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
-                            </View>
+                        { this.state.isShowEditButton ?
+                        <View style={{flex: 2, flexDirection: 'row', margin: "auto", paddingVertical: 5, alignItems: 'center'}}>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Friday'+id+1, 'start', schedule.startTime)}>
+                        <ZMuteText text={schedule.startTime + ' - '} />
+                        </TouchableOpacity>
+                        </View>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Friday'+id+1, 'end', schedule.endTime)}>
+                        <ZMuteText text={schedule.endTime} />
+                        </TouchableOpacity>
+                        </View>
+                        </View>:
+                        <View style={{flex: 2}}>
+                        <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
+                        </View>
+                        }
                             <View style={{flex: 1}}>
                               <Text style={{fontSize: 14, color: '#79787D', fontWeight: '400', textAlign: 'center'}}>{schedule.break}</Text>
                             </View>
@@ -342,9 +563,23 @@ export default class TrialPeriod extends Component {
                       res.schedules.map((schedule, id) => {
                         return (
                           <View key={id} style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 3}}>
-                            <View style={{flex: 2}}>
-                              <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
-                            </View>
+                        { this.state.isShowEditButton ?
+                        <View style={{flex: 2, flexDirection: 'row', margin: "auto", paddingVertical: 5, alignItems: 'center'}}>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Saturday'+id+1, 'start', schedule.startTime)}>
+                        <ZMuteText text={schedule.startTime + ' - '} />
+                        </TouchableOpacity>
+                        </View>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Saturday'+id+1, 'end', schedule.endTime)}>
+                        <ZMuteText text={schedule.endTime} />
+                        </TouchableOpacity>
+                        </View>
+                        </View>:
+                        <View style={{flex: 2}}>
+                        <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
+                        </View>
+                        }
                             <View style={{flex: 1}}>
                               <Text style={{fontSize: 14, color: '#79787D', fontWeight: '400', textAlign: 'center'}}>{schedule.break}</Text>
                             </View>
@@ -373,9 +608,23 @@ export default class TrialPeriod extends Component {
                       res.schedules.map((schedule, id) => {
                         return (
                           <View key={id} style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 3}}>
-                            <View style={{flex: 2}}>
-                              <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
-                            </View>
+                        { this.state.isShowEditButton ?
+                        <View style={{flex: 2, flexDirection: 'row', margin: "auto", paddingVertical: 5, alignItems: 'center'}}>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Sunday'+id+1, 'start', schedule.startTime)}>
+                        <ZMuteText text={schedule.startTime + ' - '} />
+                        </TouchableOpacity>
+                        </View>
+                        <View>
+                        <TouchableOpacity onPress={()=>this.onShowTimePicker('Sunday'+id+1, 'end', schedule.endTime)}>
+                        <ZMuteText text={schedule.endTime} />
+                        </TouchableOpacity>
+                        </View>
+                        </View>:
+                        <View style={{flex: 2}}>
+                        <Text style={{fontSize: 14, color: '#BBBBBB', fontWeight: '400', textAlign: 'center'}}>{schedule.startTime} - {schedule.endTime}</Text>
+                        </View>
+                        }
                             <View style={{flex: 1}}>
                               <Text style={{fontSize: 14, color: '#79787D', fontWeight: '400', textAlign: 'center'}}>{schedule.break}</Text>
                             </View>
@@ -475,10 +724,17 @@ export default class TrialPeriod extends Component {
             <Text style={{fontSize: 22, color: '#34314A', fontWeight: '500'}}>{timesheet.label}</Text>
           </View>
 
-          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 10}}>
-            <Text style={{fontSize: 14, color: '#65DAE8', fontWeight: '500'}}>Edit Working Hours</Text>
-            <Icon name="ios-create-outline" size={20} color="#65DAE8" style={{marginLeft: 5, backgroundColor: 'transparent'}} />
-          </View>
+
+        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 10}}>
+          <TouchableOpacity onPress={() => this.setState({isShowEditButton: false})}>
+            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                  <Text style={{fontSize: 14, color: '#65DAE8', fontWeight: '500'}}>Edit Working Hours</Text>
+                  <Icon name="ios-create-outline" size={20} color="#65DAE8" style={{marginLeft: 5, backgroundColor: 'transparent'}} />
+              </View>
+          </TouchableOpacity>
+        </View>
+
+
 
           <View style={{alignItems: 'center', marginTop: 10}}>
             <Text style={{fontSize: 16, color: 'green', fontWeight: '500'}}>{timesheet.days.length > 0 ? timesheet.paymentStatus.toUpperCase() : ''}</Text>
@@ -559,6 +815,14 @@ export default class TrialPeriod extends Component {
           {this.renderNextAndPrevButton()}
 
         </ScrollView>
+
+    <DateTimePicker
+        mode="time"
+        date={new Date(moment(this.state.currentTime, 'hh A').format())}
+        isVisible={this.state.isTimePicker}
+        onConfirm={this.onSelectTime}
+        onCancel={()=>this.setState({isTimePicker: false})}
+      />
         {this.renderOnShowLoadingPayment()}
         {this.renderConfirmTransfer()}
       </View>
