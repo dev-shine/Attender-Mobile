@@ -85,6 +85,7 @@ export default class TrialPeriod extends Component {
         this.setState({isLoadingPayment: true});
 
         if (this.state.banksArray.length > 0) {
+            console.log(timesheet)
             var totalAmount = timesheet.totalPayableHours * props.staff.startRate;
             var promiseId = this.state.banksArray[0].promiseId;
 
@@ -145,6 +146,105 @@ export default class TrialPeriod extends Component {
         } else {
             return time;
         }
+    }
+
+    getPayableHours(startTime, endTime) {
+        let start = moment(startTime, ['hh:mm A', 'hh A'])
+        let end = moment(endTime, ['hh:mm A', 'hh A'])
+        let payableHours = (start.isValid() && end.isValid()) ? moment.duration(end.diff(start)).asHours() : 0
+        payableHours = payableHours < 0 ? payableHours + 24 : payableHours
+        return payableHours;
+    }
+
+    getTotalPayableHours() {
+        let totalPayableHours = 0
+        if (this.state.timesheet.days.length > 0) {
+            this.state.timesheet.days.map((res) => {
+                switch (res.isoWeekPeriod) {
+                    case "1": {
+                        res.schedules.map((schedule, id) => {
+                            let startTime = schedule.startTime
+                            let endTime = schedule.endTime
+                            if (this.state["monstartTime" + (id + 1)]) startTime = this.state["monstartTime" + (id + 1)]
+                            if (this.state["monendTime" + (id + 1)]) endTime = this.state["monendTime" + (id + 1)]
+                            let payableHours = this.getPayableHours(startTime, endTime)
+                            totalPayableHours +=payableHours
+                        })
+                    }
+                        break;
+                    case "2": {
+                        res.schedules.map((schedule, id) => {
+                            let startTime = schedule.startTime
+                            let endTime = schedule.endTime
+                            if (this.state["tuestartTime" + (id + 1)]) startTime = this.state["tuestartTime" + (id + 1)]
+                            if (this.state["tueendTime" + (id + 1)]) endTime = this.state["tueendTime" + (id + 1)]
+                            let payableHours = this.getPayableHours(startTime, endTime)
+                            totalPayableHours +=payableHours
+                        })
+                    }
+                        break;
+                    case "3": {
+                        res.schedules.map((schedule, id) => {
+                            let startTime = schedule.startTime
+                            let endTime = schedule.endTime
+                            if (this.state["wedstartTime" + (id + 1)]) startTime = this.state["wedstartTime" + (id + 1)]
+                            if (this.state["wedendTime" + (id + 1)]) endTime = this.state["wedendTime" + (id + 1)]
+                            let payableHours = this.getPayableHours(startTime, endTime)
+                            totalPayableHours +=payableHours
+                        })
+                    }
+                        break;
+                    case "4": {
+                        res.schedules.map((schedule, id) => {
+                            let startTime = schedule.startTime
+                            let endTime = schedule.endTime
+                            if (this.state["thustartTime" + (id + 1)]) startTime = this.state["thustartTime" + (id + 1)]
+                            if (this.state["thuendTime" + (id + 1)]) endTime = this.state["thuendTime" + (id + 1)]
+                            let payableHours = this.getPayableHours(startTime, endTime)
+                            totalPayableHours +=payableHours
+                        })
+                    }
+                        break;
+                    case "5": {
+                        res.schedules.map((schedule, id) => {
+                            let startTime = schedule.startTime
+                            let endTime = schedule.endTime
+                            if (this.state["fristartTime" + (id + 1)]) startTime = this.state["fristartTime" + (id + 1)]
+                            if (this.state["friendTime" + (id + 1)]) endTime = this.state["friendTime" + (id + 1)]
+                            let payableHours = this.getPayableHours(startTime, endTime)
+                            totalPayableHours +=payableHours
+
+                        })
+                    }
+                        break;
+                    case "6": {
+                        res.schedules.map((schedule, id) => {
+                            let startTime = schedule.startTime
+                            let endTime = schedule.endTime
+                            if (this.state["satstartTime" + (id + 1)]) startTime = this.state["satstartTime" + (id + 1)]
+                            if (this.state["satendTime" + (id + 1)]) endTime = this.state["satendTime" + (id + 1)]
+                            let payableHours = this.getPayableHours(startTime, endTime)
+                            totalPayableHours +=payableHours
+                        })
+                    }
+                        break;
+                    case "7": {
+                        res.schedules.map((schedule, id) => {
+                            let startTime = schedule.startTime
+                            let endTime = schedule.endTime
+                            if (this.state["sunstartTime" + (id + 1)]) startTime = this.state["sunstartTime" + (id + 1)]
+                            if (this.state["sunendTime" + (id + 1)]) endTime = this.state["sunendTime" + (id + 1)]
+                            let payableHours = this.getPayableHours(startTime, endTime)
+                            totalPayableHours +=payableHours
+                        })
+                    }
+                        break;
+                    default:
+
+                }
+            })
+        }
+        return totalPayableHours
     }
 
     onSelectTime = (time) => {
@@ -270,6 +370,7 @@ export default class TrialPeriod extends Component {
     renderConfirmTransfer = () => {
         let props = this.props.navigation.state.params.props;
         let timesheet = this.state.timesheet;
+        timesheet.totalPayableHours = this.getTotalPayableHours()
         let totalAmount = timesheet.totalPayableHours * props.staff.startRate;
 
         return (
@@ -351,14 +452,6 @@ export default class TrialPeriod extends Component {
                 </View>
             </Modal>
         )
-    }
-
-    getPayableHours(startTime, endTime) {
-        let start = moment(startTime, ['hh:mm A', 'hh A'])
-        let end = moment(endTime, ['hh:mm A', 'hh A'])
-        let payableHours = (start.isValid() && end.isValid()) ? moment.duration(end.diff(start)).asHours() : 0
-        payableHours = payableHours < 0 ? payableHours + 24 : payableHours
-        return payableHours;
     }
 
     renderTimeSheet = () => {
@@ -1144,7 +1237,7 @@ export default class TrialPeriod extends Component {
                                 fontSize: 18,
                                 color: '#34314A',
                                 fontWeight: '500'
-                            }}>{timesheet.totalPayableHours}</Text>
+                            }}>{this.getTotalPayableHours()}</Text>
                         </View>
                     </View>
 
@@ -1182,7 +1275,7 @@ export default class TrialPeriod extends Component {
 
                         <View style={{alignItems: 'center'}}>
                             <Text style={{fontSize: 22, color: '#34314A', fontWeight: '500'}}>AUD
-                                ${(timesheet.totalPayableHours * props.staff.startRate)}</Text>
+                                ${(this.getTotalPayableHours() * props.staff.startRate)}</Text>
                         </View>
                     </View>
 
