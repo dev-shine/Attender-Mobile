@@ -53,9 +53,13 @@ export default class TrialPeriod extends Component {
             accName: '',
             accNumber: '',
             isShowEditButton: true,
+            isShowEditPayableHours: true,
+            isShowEditRate: true,
             currentTime: new Date(),
             type: '',
-            isTimePicker: false
+            isTimePicker: false,
+            additionalHours:0,
+            startRate: props.navigation.state.params.props.staff.startRate
         }
     }
 
@@ -86,7 +90,7 @@ export default class TrialPeriod extends Component {
 
         if (this.state.banksArray.length > 0) {
             console.log(timesheet)
-            var totalAmount = timesheet.totalPayableHours * props.staff.startRate;
+            var totalAmount = timesheet.totalPayableHours * this.state.startRate;
             var promiseId = this.state.banksArray[0].promiseId;
 
             API.post(`timesheet/${timesheet.id}/make_payment`, {amount: totalAmount, account_id: promiseId})
@@ -115,6 +119,8 @@ export default class TrialPeriod extends Component {
                 console.log('management', res);
                 if (res.status) {
                     this.setState({timesheet: res.timesheet, next: res.actions.next, prev: res.actions.previous});
+                    this.timeSheetToState(res.timesheet)
+
                 }
             })
     }
@@ -156,6 +162,68 @@ export default class TrialPeriod extends Component {
         return payableHours;
     }
 
+    timeSheetToState(timesheet) {
+        let state = this.state;
+
+        if (timesheet.days.length > 0) {
+            timesheet.days.map((res) => {
+                switch (res.isoWeekPeriod) {
+                    case "1": {
+                        res.schedules.map((schedule, id) => {
+                            state["monstartTime" + (id + 1)] = !schedule.startTime ? schedule.endTime : schedule.startTime
+                            state["monendTime" + (id + 1)] = !schedule.endTime ? schedule.startTime : schedule.endTime
+                        })
+                    }
+                        break;
+                    case "2": {
+                        res.schedules.map((schedule, id) => {
+                            state["tuestartTime" + (id + 1)] = !schedule.startTime ? schedule.endTime : schedule.startTime
+                            state["tueendTime" + (id + 1)] = !schedule.endTime ? schedule.startTime : schedule.endTime
+                        })
+                    }
+                        break;
+                    case "3": {
+                        res.schedules.map((schedule, id) => {
+                            state["wedstartTime" + (id + 1)] = !schedule.startTime ? schedule.endTime : schedule.startTime
+                            state["wedendTime" + (id + 1)] = !schedule.endTime ? schedule.startTime : schedule.endTime
+                        })
+                    }
+                        break;
+                    case "4": {
+                        res.schedules.map((schedule, id) => {
+                            state["thustartTime" + (id + 1)] = !schedule.startTime ? schedule.endTime : schedule.startTime
+                            state["thuendTime" + (id + 1)] = !schedule.endTime ? schedule.startTime : schedule.endTime
+                        })
+                    }
+                        break;
+                    case "5": {
+                        res.schedules.map((schedule, id) => {
+                            state["fristartTime" + (id + 1)] = !schedule.startTime ? schedule.endTime : schedule.startTime
+                            state["friendTimeTime" + (id + 1)] = !schedule.endTime ? schedule.startTime : schedule.endTime
+                        })
+                    }
+                        break;
+                    case "6": {
+                        res.schedules.map((schedule, id) => {
+                            state["satstartTime" + (id + 1)] = !schedule.startTime ? schedule.endTime : schedule.startTime
+                            state["satendTime" + (id + 1)] = !schedule.endTime ? schedule.startTime : schedule.endTime
+                        })
+                    }
+                        break;
+                    case "7": {
+                        res.schedules.map((schedule, id) => {
+                            state["sunstartTime" + (id + 1)] = !schedule.startTime ? schedule.endTime : schedule.startTime
+                            state["sunendTime" + (id + 1)] = !schedule.endTime ? schedule.startTime : schedule.endTime
+                        })
+                    }
+                        break;
+                    default:
+                }
+            })
+            this.setState(...state)
+        }
+    }
+
     getTotalPayableHours() {
         let totalPayableHours = 0
         if (this.state.timesheet.days.length > 0) {
@@ -168,7 +236,7 @@ export default class TrialPeriod extends Component {
                             if (this.state["monstartTime" + (id + 1)]) startTime = this.state["monstartTime" + (id + 1)]
                             if (this.state["monendTime" + (id + 1)]) endTime = this.state["monendTime" + (id + 1)]
                             let payableHours = this.getPayableHours(startTime, endTime)
-                            totalPayableHours +=payableHours
+                            totalPayableHours += payableHours
                         })
                     }
                         break;
@@ -179,7 +247,7 @@ export default class TrialPeriod extends Component {
                             if (this.state["tuestartTime" + (id + 1)]) startTime = this.state["tuestartTime" + (id + 1)]
                             if (this.state["tueendTime" + (id + 1)]) endTime = this.state["tueendTime" + (id + 1)]
                             let payableHours = this.getPayableHours(startTime, endTime)
-                            totalPayableHours +=payableHours
+                            totalPayableHours += payableHours
                         })
                     }
                         break;
@@ -190,7 +258,7 @@ export default class TrialPeriod extends Component {
                             if (this.state["wedstartTime" + (id + 1)]) startTime = this.state["wedstartTime" + (id + 1)]
                             if (this.state["wedendTime" + (id + 1)]) endTime = this.state["wedendTime" + (id + 1)]
                             let payableHours = this.getPayableHours(startTime, endTime)
-                            totalPayableHours +=payableHours
+                            totalPayableHours += payableHours
                         })
                     }
                         break;
@@ -201,7 +269,7 @@ export default class TrialPeriod extends Component {
                             if (this.state["thustartTime" + (id + 1)]) startTime = this.state["thustartTime" + (id + 1)]
                             if (this.state["thuendTime" + (id + 1)]) endTime = this.state["thuendTime" + (id + 1)]
                             let payableHours = this.getPayableHours(startTime, endTime)
-                            totalPayableHours +=payableHours
+                            totalPayableHours += payableHours
                         })
                     }
                         break;
@@ -212,7 +280,7 @@ export default class TrialPeriod extends Component {
                             if (this.state["fristartTime" + (id + 1)]) startTime = this.state["fristartTime" + (id + 1)]
                             if (this.state["friendTime" + (id + 1)]) endTime = this.state["friendTime" + (id + 1)]
                             let payableHours = this.getPayableHours(startTime, endTime)
-                            totalPayableHours +=payableHours
+                            totalPayableHours += payableHours
 
                         })
                     }
@@ -224,7 +292,7 @@ export default class TrialPeriod extends Component {
                             if (this.state["satstartTime" + (id + 1)]) startTime = this.state["satstartTime" + (id + 1)]
                             if (this.state["satendTime" + (id + 1)]) endTime = this.state["satendTime" + (id + 1)]
                             let payableHours = this.getPayableHours(startTime, endTime)
-                            totalPayableHours +=payableHours
+                            totalPayableHours += payableHours
                         })
                     }
                         break;
@@ -235,7 +303,7 @@ export default class TrialPeriod extends Component {
                             if (this.state["sunstartTime" + (id + 1)]) startTime = this.state["sunstartTime" + (id + 1)]
                             if (this.state["sunendTime" + (id + 1)]) endTime = this.state["sunendTime" + (id + 1)]
                             let payableHours = this.getPayableHours(startTime, endTime)
-                            totalPayableHours +=payableHours
+                            totalPayableHours += payableHours
                         })
                     }
                         break;
@@ -248,117 +316,208 @@ export default class TrialPeriod extends Component {
     }
 
     onSelectTime = (time) => {
-        console.log(this.state)
+
+        let formmatedTime = this.timeFormatter(time)
         switch (this.state.type) {
             case 'Monday1': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({monstartTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        monstartTime1: formmatedTime,
+                        isTimePicker: false,
+                        monendTime1: this.state.monendTime1 ? this.state.monendTime1 : formmatedTime
+                    });
                 } else {
-                    this.setState({monendTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        monendTime1: formmatedTime,
+                        isTimePicker: false,
+                        monstartTime1: this.state.monstartTime1 ? this.state.monstartTime1 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Monday2': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({monstartTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        monstartTime2: formmatedTime,
+                        isTimePicker: false,
+                        monendTime2: this.state.monendTime2 ? this.state.monendTime2 : formmatedTime
+                    });
                 } else {
-                    this.setState({monendTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        monendTime2: formmatedTime,
+                        isTimePicker: false,
+                        monstartTime2: this.state.monstartTime2 ? this.state.monstartTime2 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Tuesday1': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({tuestartTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        tuestartTime1: formmatedTime,
+                        isTimePicker: false,
+                        tueendTime1: this.state.tueendTime1 ? this.state.tueendTime1 : formmatedTime
+                    });
                 } else {
-                    this.setState({tueendTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        tueendTime1: formmatedTime,
+                        isTimePicker: false,
+                        tuestartTime1: this.state.tuestartTime1 ? this.state.tuestartTime1 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Tuesday2': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({tuestartTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        tuestartTime2: formmatedTime, isTimePicker: false,
+                        tueendTime2: this.state.tueendTime2 ? this.state.tueendTime2 : formmatedTime
+                    });
                 } else {
-                    this.setState({tueendTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        tueendTime2: formmatedTime, isTimePicker: false,
+                        tuestartTime2: this.state.tuestartTime2 ? this.state.tuestartTime2 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Wednesday1': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({wedstartTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        wedstartTime1: formmatedTime, isTimePicker: false,
+                        wedendTime1: this.state.wedendTime1 ? this.state.wedendTime1 : formmatedTime
+                    });
                 } else {
-                    this.setState({wedendTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        wedendTime1: formmatedTime, isTimePicker: false,
+                        wedstartTime1: this.state.wedstartTime1 ? this.state.wedstartTime1 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Wednesday2': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({wedstartTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        wedstartTime2: formmatedTime, isTimePicker: false,
+                        wedendTime2: this.state.wedendTime2 ? this.state.wedendTime2 : formmatedTime
+                    });
                 } else {
-                    this.setState({wedendTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        wedendTime2: formmatedTime, isTimePicker: false,
+                        wedstartTime2: this.state.wedstartTime2 ? this.state.wedstartTime2 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Thursday1': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({thustartTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        thustartTime1: formmatedTime, isTimePicker: false,
+                        thuendTime1: this.state.thuendTime1 ? this.state.thuendTime1 : formmatedTime
+                    });
                 } else {
-                    this.setState({thuendTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        thuendTime1: formmatedTime, isTimePicker: false,
+                        thustartTime1: this.state.thustartTime1 ? this.state.thustartTime1 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Thursday2': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({thustartTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        thustartTime2: formmatedTime, isTimePicker: false,
+                        thuendTime2: this.state.thuendTime2 ? this.state.thuendTime2 : formmatedTime
+                    });
                 } else {
-                    this.setState({thuendTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        thuendTime2: formmatedTime, isTimePicker: false,
+                        thustartTime2: this.state.thustartTime2 ? this.state.thustartTime2 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Friday1': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({fristartTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        fristartTime1: formmatedTime, isTimePicker: false,
+                        friendTime1: this.state.friendTime1 ? this.state.friendTime1 : formmatedTime
+                    });
                 } else {
-                    this.setState({friendTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        friendTime1: formmatedTime, isTimePicker: false,
+                        fristartTime1: this.state.fristartTime1 ? this.state.fristartTime1 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Friday2': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({fristartTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        fristartTime2: formmatedTime, isTimePicker: false,
+                        friendTime2: this.state.friendTime2 ? this.state.friendTime2 : formmatedTime
+                    });
                 } else {
-                    this.setState({friendTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        friendTime2: formmatedTime, isTimePicker: false,
+                        fristartTime2: this.state.fristartTime2 ? this.state.fristartTime2 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Saturday1': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({satstartTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        satstartTime1: formmatedTime, isTimePicker: false,
+                        satendTime1: this.state.satendTime1 ? this.state.satendTime1 : formmatedTime
+                    });
                 } else {
-                    this.setState({satendTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        satendTime1: formmatedTime, isTimePicker: false,
+                        satstartTime1: this.state.satstartTime1 ? this.state.satstartTime1 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Saturday2': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({satstartTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        satstartTime2: formmatedTime, isTimePicker: false,
+                        satendTime2: this.state.satendTime2 ? this.state.satendTime2 : formmatedTime
+                    });
                 } else {
-                    this.setState({satendTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        satendTime2: formmatedTime, isTimePicker: false,
+                        satstartTime2: this.state.satstartTime2 ? this.state.satstartTime2 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Sunday1': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({sunstartTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        sunstartTime1: formmatedTime, isTimePicker: false,
+                        sunendTime1: this.state.sunendTime1 ? this.state.sunendTime1 : formmatedTime
+                    });
                 } else {
-                    this.setState({sunendTime1: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        sunendTime1: formmatedTime, isTimePicker: false,
+                        sunstartTime1: this.state.sunstartTime1 ? this.state.sunstartTime1 : formmatedTime
+                    });
                 }
             }
                 break;
             case 'Sunday2': {
                 if (this.state.startOrEnd == 'start') {
-                    this.setState({sunstartTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        sunstartTime2: formmatedTime, isTimePicker: false,
+                        sunendTime2: this.state.sunendTime2 ? this.state.sunendTime2 : formmatedTime
+                    });
                 } else {
-                    this.setState({sunendTime2: this.timeFormatter(time), isTimePicker: false});
+                    this.setState({
+                        sunendTime2: formmatedTime, isTimePicker: false,
+                        sunstartTime2: this.state.sunstartTime2 ? this.state.sunstartTime2 : formmatedTime
+                    });
                 }
             }
                 break;
@@ -370,8 +529,8 @@ export default class TrialPeriod extends Component {
     renderConfirmTransfer = () => {
         let props = this.props.navigation.state.params.props;
         let timesheet = this.state.timesheet;
-        timesheet.totalPayableHours = this.getTotalPayableHours()
-        let totalAmount = timesheet.totalPayableHours * props.staff.startRate;
+        timesheet.totalPayableHours = this.getTotalPayableHours() + this.state.additionalHours*1
+        let totalAmount = timesheet.totalPayableHours * this.state.startRate;
 
         return (
             <Modal
@@ -497,7 +656,8 @@ export default class TrialPeriod extends Component {
                                                         <View style={{
                                                             flex: 2,
                                                             flexDirection: 'row',
-                                                            alignItems: 'center'
+                                                            alignItems: 'center',
+                                                            paddingLeft: 28
                                                         }}>
                                                             <TouchableOpacity
                                                                 onPress={() => this.onShowTimePicker('Monday' + (id + 1), 'start', startTime)}>
@@ -582,8 +742,8 @@ export default class TrialPeriod extends Component {
                                                             flex: 2,
                                                             flexDirection: 'row',
                                                             margin: "auto",
-                                                            paddingVertical: 5,
-                                                            alignItems: 'center'
+                                                            alignItems: 'center',
+                                                            paddingLeft: 28
                                                         }}>
                                                             <TouchableOpacity
                                                                 onPress={() => this.onShowTimePicker('Tuesday' + (id + 1), 'start', startTime)}>
@@ -668,8 +828,8 @@ export default class TrialPeriod extends Component {
                                                             flex: 2,
                                                             flexDirection: 'row',
                                                             margin: "auto",
-                                                            paddingVertical: 5,
-                                                            alignItems: 'center'
+                                                            alignItems: 'center',
+                                                            paddingLeft: 28
                                                         }}>
                                                             <TouchableOpacity
                                                                 onPress={() => this.onShowTimePicker('Wednesday' + (id + 1), 'start', startTime)}>
@@ -686,7 +846,7 @@ export default class TrialPeriod extends Component {
                                                                 color: '#BBBBBB',
                                                                 fontWeight: '400',
                                                                 textAlign: 'center'
-                                                            }}>{schedule.startTime} - {schedule.endTime}</Text>
+                                                            }}>{startTime} - {endTime}</Text>
                                                         </View>
                                                     }
                                                     <View style={{flex: 1}}>
@@ -754,8 +914,8 @@ export default class TrialPeriod extends Component {
                                                             flex: 2,
                                                             flexDirection: 'row',
                                                             margin: "auto",
-                                                            paddingVertical: 5,
-                                                            alignItems: 'center'
+                                                            alignItems: 'center',
+                                                            paddingLeft: 28
                                                         }}>
                                                             <TouchableOpacity
                                                                 onPress={() => this.onShowTimePicker('Thursday' + (id + 1), 'start', startTime)}>
@@ -840,8 +1000,8 @@ export default class TrialPeriod extends Component {
                                                             flex: 2,
                                                             flexDirection: 'row',
                                                             margin: "auto",
-                                                            paddingVertical: 5,
-                                                            alignItems: 'center'
+                                                            alignItems: 'center',
+                                                            paddingLeft: 28
                                                         }}>
                                                             <TouchableOpacity
                                                                 onPress={() => this.onShowTimePicker('Friday' + (id + 1), 'start', startTime)}>
@@ -926,8 +1086,8 @@ export default class TrialPeriod extends Component {
                                                             flex: 2,
                                                             flexDirection: 'row',
                                                             margin: "auto",
-                                                            paddingVertical: 5,
-                                                            alignItems: 'center'
+                                                            alignItems: 'center',
+                                                            paddingLeft: 28
                                                         }}>
                                                             <TouchableOpacity
                                                                 onPress={() => this.onShowTimePicker('Saturday' + (id + 1), 'start', startTime)}>
@@ -1012,8 +1172,8 @@ export default class TrialPeriod extends Component {
                                                             flex: 2,
                                                             flexDirection: 'row',
                                                             margin: "auto",
-                                                            paddingVertical: 5,
-                                                            alignItems: 'center'
+                                                            alignItems: 'center',
+                                                            paddingLeft: 28
                                                         }}>
                                                             <TouchableOpacity
                                                                 onPress={() => this.onShowTimePicker('Sunday' + (id + 1), 'start', startTime)}>
@@ -1225,10 +1385,16 @@ export default class TrialPeriod extends Component {
                                 alignItems: 'center',
                                 marginTop: 5
                             }}>
-                                <Text style={{fontSize: 14, color: '#65DAE8', fontWeight: '500'}}>Edit Payable
-                                    Hours</Text>
-                                <Icon name="ios-create-outline" size={20} color="#65DAE8"
-                                      style={{marginLeft: 5, backgroundColor: 'transparent'}}/>
+                                <TouchableOpacity
+                                    onPress={() => this.setState({isShowEditPayableHours: !this.state.isShowEditPayableHours})}>
+                                    <View
+                                        style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                        <Text style={{fontSize: 14, color: '#65DAE8', fontWeight: '500'}}>Add Payable
+                                            Hours</Text>
+                                        <Icon name="ios-create-outline" size={20} color="#65DAE8"
+                                              style={{marginLeft: 5, backgroundColor: 'transparent'}}/>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
@@ -1238,6 +1404,21 @@ export default class TrialPeriod extends Component {
                                 color: '#34314A',
                                 fontWeight: '500'
                             }}>{this.getTotalPayableHours()}</Text>
+                            {!this.state.isShowEditPayableHours ? <TextInput style={{
+                                fontSize: 18,
+                                color: '#34314A',
+                                fontWeight: '500',
+                                textAlign: 'right',
+                                paddingRight: 20
+                            }}
+                                                                             onChangeText={(hours) => this.setState({additionalHours: hours})}
+                                                                             value={this.state.additionalHours}
+                                                                             placeholder='    0'
+                                                                             keyboardType={'numeric'}/> : <Text style={{
+                                fontSize: 18,
+                                color: '#34314A',
+                                fontWeight: '500'
+                            }}>{this.state.additionalHours}</Text>}
                         </View>
                     </View>
 
@@ -1254,14 +1435,31 @@ export default class TrialPeriod extends Component {
                                 alignItems: 'center',
                                 marginTop: 5
                             }}>
-                                <Text style={{fontSize: 14, color: '#65DAE8', fontWeight: '500'}}>Edit Rate</Text>
-                                <Icon name="ios-create-outline" size={20} color="#65DAE8"
-                                      style={{marginLeft: 5, backgroundColor: 'transparent'}}/>
+                                <TouchableOpacity
+                                    onPress={() => this.setState({isShowEditRate: !this.state.isShowEditRate})}>
+                                    <View
+                                        style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                        <Text style={{fontSize: 14, color: '#65DAE8', fontWeight: '500'}}>Edit Rate</Text>
+                                        <Icon name="ios-create-outline" size={20} color="#65DAE8"
+                                              style={{marginLeft: 5, backgroundColor: 'transparent'}}/>
+                                    </View>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
                         <View style={{alignItems: 'center'}}>
-                            <Text style={{fontSize: 18, color: '#34314A', fontWeight: '500'}}>${props.staff.startRate}/Hr</Text>
+                            {!this.state.isShowEditRate ? <TextInput style={{
+                                fontSize: 18,
+                                color: '#34314A',
+                                fontWeight: '500',
+                                textAlign: 'right',
+                                paddingRight: 20
+                            }}
+                                                                             onChangeText={(startRate) => this.setState({startRate})}
+                                                                             value={this.state.startRate}
+                                                                             placeholder={""+this.state.startRate}
+                                                                             keyboardType={'numeric'}/> : <Text style={{fontSize: 18, color: '#34314A', fontWeight: '500'}}>${this.state.startRate}/Hr</Text>}
+
                         </View>
                     </View>
 
@@ -1275,7 +1473,7 @@ export default class TrialPeriod extends Component {
 
                         <View style={{alignItems: 'center'}}>
                             <Text style={{fontSize: 22, color: '#34314A', fontWeight: '500'}}>AUD
-                                ${(this.getTotalPayableHours() * props.staff.startRate)}</Text>
+                                ${((this.getTotalPayableHours() + this.state.additionalHours*1) * this.state.startRate)}</Text>
                         </View>
                     </View>
 
