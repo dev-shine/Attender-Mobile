@@ -161,7 +161,7 @@ export default class VenueStaff extends Component {
     }
 
     onDirectHire = () => {
-        API.post(`hire/${this.state.selectedStaff._id}`, {}).then((res) => {
+        API.post(`hire/${this.state.selectedStaff.staff._id}`, {}).then((res) => {
             console.log(res);
             if (res.status) {
                 this.setState({isTrialShow: false, isActiveContent: true})
