@@ -290,7 +290,6 @@ const App = StackNavigator(
     WithDraw: {screen: WithDraw},
     TrialPeriod: {screen: TrialPeriod},
     Services: {screen: Services},
-    BrowseEvent: {screen: BrowseEvent},
     OnboardingScreen: {screen: OnboardingScreen},
     Dashboard: {screen: dashboard},
     SProfile: {screen: StaffProfile},

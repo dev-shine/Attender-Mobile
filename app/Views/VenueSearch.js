@@ -425,9 +425,19 @@ export default class VenueSearch extends Component {
                   isInterested = data.interested[this.props.navigation.state.params.userId].interestedAt.length > 0;
                 }
               }
+              console.log("interesting ",data)
               return (
                 <View key={id} style={styles.body}>
-                  <ZVenueCard avatar={data.image} venue={data.name} name={data.type.join(' / ')} schedule={weekdays} schedule1={weekends} location={data.locationName} services={true} isInterested={isInterested} onPressInterested={()=> this.onSelectInterested(data._id)} onPressMore={() => this.setState({modalVisible: true})}  isAlcohol={this.state.isAlcohol} isDrinks={this.state.isDrinks} isCocktails={this.state.isCocktails}/>
+                  <ZVenueCard avatar={data.image} venue={data.name} name={data.type.join(' / ')}
+                              schedule={weekdays}
+                              schedule1={weekends} location={data.locationName}
+                              services={true}
+                              isInterested={isInterested}
+                              onPressInterested={()=> this.onSelectInterested(data._id)}
+                              onPressMore={() => this.setState({modalVisible: true})}
+                              isAlcohol={this.state.isAlcohol}
+                              isDrinks={this.state.isDrinks}
+                              isCocktails={this.state.isCocktails}/>
                 </View>
               )
             })

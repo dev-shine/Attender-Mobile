@@ -334,10 +334,11 @@ export default class Messages extends Component {
             <View style={styles.body2}>
               {
                 this.state.messages.map((res, index)=>{
+                  console.log(res)
                   return (
                     <Swipeable key={res._id} rightButtons={rightButtons(res._id)} rightButtonWidth={120}>
                       <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, newMessage: false})}>
-                        <ZMessageCard avatar={this.renderMessageAvatar(res)} fullname={res.uname} previewMessage={res.message} venue={'Coordinator at Lu Me Bar & Cafe'} dataTime={moment(res.latest).fromNow()} isChecked={res.delivered} seen={res.seen}/>
+                        <ZMessageCard avatar={this.renderMessageAvatar(res)} fullname={res.uname} previewMessage={res.message}  dataTime={moment(res.latest).fromNow()} isChecked={res.delivered} seen={res.seen}/>
                       </TouchableOpacity>
                     </Swipeable>
                   )
