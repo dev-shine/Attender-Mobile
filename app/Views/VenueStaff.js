@@ -3126,6 +3126,53 @@ export default class VenueStaff extends Component {
         )
     }
 
+    renderAllTrial = () => {
+        let myProfile = this.state.userData;
+
+        return (
+            <View style={styles.cardBody}>
+                {
+                    this.state.data2.map((res, index) => {
+                        return (
+                            <ZCard key={index} styles={{borderWidth: 0, backgroundColor: 'white', margin: 5}}>
+                                <TouchableOpacity onPress={() => this.setState({
+                                    isTrialShow: true,
+                                    isActiveContent: false,
+                                    selectedStaff: res
+                                })}>
+                                    <ZAvatar source={this.renderAvatar(res.staff)} hideIndicator={true}/>
+                                    <ZText text={res.staff.fullname} styles={{fontSize: 14}}/>
+                                </TouchableOpacity>
+                                <ZRater/>
+                                <ZMuteText text={res.staff.frequency}/>
+                                <ZMuteText text={res.staff.rateBadge}/>
+                                <View style={{marginVertical: 10}}>
+                                    <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true}
+                                                    isSelected={this.state.selected} selectedColor="#5F5FBA"
+                                                    onPress={() => this.getConversationId(res, myProfile)}/>
+                                </View>
+
+                                <TouchableOpacity
+                                    onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
+                                    <View style={{borderBottomWidth: 1, borderColor: '#5F5FBA'}}>
+                                        <Text style={{color: '#5F5FBA', fontSize: 13}}>Add monthly review</Text>
+                                    </View>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => this.onSelectStaffSchedule(res)}
+                                                  style={{position: 'absolute', top: 20, right: 10}}>
+                                    <View>
+                                        <Icon name="md-calendar" size={30} color="#716D7B"/>
+                                    </View>
+                                </TouchableOpacity>
+
+                            </ZCard>
+                        )
+                    })
+                }
+            </View>
+        )
+    }
     renderBartender2 = () => {
         let myProfile = this.state.userData;
 
@@ -3751,13 +3798,7 @@ export default class VenueStaff extends Component {
 
 
                 <View style={styles.cardBody}>
-                    {this.state.isBartender ? this.renderBartender2() : null}
-                    {this.state.isManager ? this.renderManager2() : null}
-                    {this.state.isWaiter ? this.renderWaiter2() : null}
-                    {this.state.isChef ? this.renderChef2() : null}
-                    {this.state.isKitchen ? this.renderKitchen2() : null}
-                    {this.state.isBarback ? this.renderBarback2() : null}
-                    {this.state.isHost ? this.renderHost2() : null}
+                    {this.renderAllTrial()}
                 </View>
                 {this.renderStaffModal()}
             </ScrollView>
