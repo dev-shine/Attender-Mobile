@@ -57,6 +57,7 @@ export default class Dashboard extends Component {
 
   constructor(props){
     super(props);
+    console.log("TESTING",props.navigation.state.params)
     this.state = {
       selected: false,
       data: [],
@@ -929,7 +930,7 @@ export default class Dashboard extends Component {
     if (this.props.navigation.state.params.navigateToMenu) {
       this.props.navigation.dispatch({type: 'Navigation/RESET', index: 0, actions: [{ type: 'Navigate', routeName: 'HomeEmployer'}]});
     } else {
-      this.props.navigation.state.params.onGoBack()
+      // this.props.navigation.state.params.onGoBack()
       this.props.navigation.goBack();
     }
   }
@@ -1188,7 +1189,7 @@ export default class Dashboard extends Component {
                   leftIconText='Inbox'
                   SubleftIcon="ios-arrow-round-back-outline"
                   subLeftIconColor="white"
-                  onSubLeftIconPress={()=>[this.props.navigation.state.params.onGoBack(), this.props.navigation.goBack()]}
+                  onSubLeftIconPress={()=>[ this.props.navigation.goBack()]}
                   onLeftIconPress={()=>{this.setState({isArchived: false})}}
                   onRightIconPress={()=>navigate('NMessage', {name: 'NMessage'})}
                   >
@@ -1217,7 +1218,7 @@ export default class Dashboard extends Component {
                       this.state.archived.map((res, index)=>{
                         return (
                           <Swipeable key={res._id} rightButtons={rightButtons(res._id)} rightButtonWidth={120}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, type: 'Venue', newMessage: false})}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, type: 'Venue', newMessage: false,  staff: res.staff})}>
                               <ZMessageCard avatar={this.renderMessageAvatar(res)} fullname={res.uname} previewMessage={res.message} dataTime={moment(res.latest).fromNow()} isChecked={res.delivered} seen={res.seen}/>
                             </TouchableOpacity>
                           </Swipeable>
@@ -1257,7 +1258,7 @@ export default class Dashboard extends Component {
                   leftIconText='Archived'
                   SubleftIcon="ios-arrow-round-back-outline"
                   subLeftIconColor="white"
-                  onSubLeftIconPress={()=>[this.props.navigation.state.params.onGoBack(), this.props.navigation.goBack()]}
+                  onSubLeftIconPress={()=>[ this.props.navigation.goBack()]}
                   onLeftIconPress={()=>[this.setState({isArchived: true}), this.getAllArchived()]}
                   onRightIconPress={()=>navigate('NMessage', {name: 'NMessage', userProfile})}
                   >
@@ -1317,9 +1318,10 @@ export default class Dashboard extends Component {
                   <View style={styles.body2}>
                     {
                       this.state.messages.map((res, index)=>{
+
                         return (
                           <Swipeable key={res._id} rightButtons={rightButtons(res._id)} rightButtonWidth={120}>
-                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, type: 'Venue', newMessage: false, venue: res.meta})}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, type: 'Venue', newMessage: false, venue: res.meta,  staff: res.staff})}>
                               <ZMessageCard avatar={this.renderMessageAvatar(res)} fullname={res.uname} previewMessage={res.message} venue={res.meta} dataTime={moment(res.latest).fromNow()} isChecked={res.delivered} seen={res.seen}/>
                             </TouchableOpacity>
                           </Swipeable>
@@ -1341,7 +1343,7 @@ export default class Dashboard extends Component {
               <ZHeader2
                 leftIcon="ios-arrow-round-back-outline"
                 leftIconColor="white"
-                leftIconPress={()=>[this.props.navigation.state.params.onGoBack(), this.props.navigation.goBack()]}
+                leftIconPress={()=>[, this.props.navigation.goBack()]}
                 rightIcon={this.props.navigation.state.params.isVenue ? "ios-more" : ''}
                 rightIconColor="white"
                 onPress={()=>navigate('Setup',{editMode: true, venueEditShortcut: true, userData: this.props.navigation.state.params.userData})}

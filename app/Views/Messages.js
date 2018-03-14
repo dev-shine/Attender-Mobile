@@ -60,7 +60,7 @@ export default class Messages extends Component {
 
   getStaffThreadMessages = () => {
     API.get('staff-messages').then((res)=>{
-     console.log('messages', res);
+     console.log('messages Jameson', res);
      if (res.status) {
        this.setState({messages: res.threads})
      }
@@ -337,7 +337,9 @@ export default class Messages extends Component {
                   console.log(res)
                   return (
                     <Swipeable key={res._id} rightButtons={rightButtons(res._id)} rightButtonWidth={120}>
-                      <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, newMessage: false, staff: res.staff})}>
+                      <TouchableOpacity onPress={() => {
+                        this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, newMessage: false, staff: res.staff})
+                      }}>
                         <ZMessageCard avatar={this.renderMessageAvatar(res)} fullname={res.uname} previewMessage={res.message}  dataTime={moment(res.latest).fromNow()} isChecked={res.delivered} seen={res.seen}/>
                       </TouchableOpacity>
                     </Swipeable>
@@ -409,7 +411,10 @@ export default class Messages extends Component {
                 this.state.archived.map((res, index)=>{
                   return (
                     <Swipeable key={index} rightButtons={rightButtons(res._id)} rightButtonWidth={120}>
-                      <TouchableOpacity onPress={() => this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, newMessage: false})}>
+                      <TouchableOpacity onPress={() => {
+                          console.log("Vallar Archived", res)
+                          this.props.navigation.navigate('ChatBox', {messageDetails: res, userData: userProfile, newMessage: false,  staff: res.staff})
+                      }}>
                         <ZMessageCard avatar={res.uavatar || 'https://www.nztcc.org/themes/kos/images/avatar.png'} fullname={res.uname} previewMessage={res.message} dataTime={moment(res.latest).fromNow()} isChecked={res.delivered} seen={res.seen}/>
                       </TouchableOpacity>
                     </Swipeable>
