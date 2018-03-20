@@ -160,6 +160,20 @@ export default class VenueStaff extends Component {
         this.getVenueProfile();
     }
 
+    onUnHire = () => {
+        API.post(`remove-staff/${this.state.selectedStaff._id}`, {}).then((res) => {
+            console.log(res);
+            if (res.status) {
+                this.setState({isTrialShow: false, isActiveContent: false})
+                this.getActiveStaffs();
+                this.getTrialStaffs();
+                this.getVenueProfile();
+            } else {
+                alert('Something went wrong.');
+            }
+        });
+    }
+
     onDirectHire = () => {
         API.post(`hire/${this.state.selectedStaff.staff._id}`, {}).then((res) => {
             console.log(res);
@@ -3902,7 +3916,19 @@ export default class VenueStaff extends Component {
                             {this.renderCertificate(this.state.selectedStaff.staff.certificates)}
                             {this.renderVideo(this.state.selectedStaff.staff.videos)}
                         </View>
-
+                        <View style={{
+                            marginVertical: 10,
+                            flexDirection: 'row',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <ZRoundedButton name="Unhire" styles={{marginRight: 20}} normalButtonStyle={{
+                                backgroundColor: 'red',
+                                width: 140,
+                                alignSelf: 'center'
+                            }} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA"
+                                            onPress={() => this.onUnHire()}/>
+                        </View>
                     </ScrollView>
                 </View>
             )
