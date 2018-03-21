@@ -314,6 +314,8 @@ export default class Notification extends Component {
                         this.state.notifications.length > 0 ?
                             this.state.notifications.map((res, index) => {
                                 let status = '';
+                                let predicate = res.employer.name
+                                let subject = res.staffId.fullname
                                 switch (res.type) {
                                     case 'message':
                                         status = 'has message';
@@ -338,8 +340,12 @@ export default class Notification extends Component {
                                     case 'hired':
                                         status = 'started to work on'
                                         break;
+                                    case 'task':
+                                        status = 'tasks has been updated by '
+                                        break;
                                     default:
                                 }
+
                                 // if (res.type == 'venue-interest') {
                                 //   status = 'is interested in your Venue at'
                                 // } else if (res.type == 'event-interest') {
@@ -368,12 +374,13 @@ export default class Notification extends Component {
                                                                 borderColor: 'white'
                                                             }} source={{uri: res.staffId.avatar}}/>
                                                         </View>
+
                                                         <View style={{flex: 1}}>
                                                             <Text>
                                                                 <Text style={{
                                                                     fontSize: 14,
                                                                     fontWeight: '500'
-                                                                }}>{res.staffId.fullname}</Text>
+                                                                }}>{subject}</Text>
                                                                 <Text style={{
                                                                     fontSize: 12,
                                                                     color: '#8C8C8C'
@@ -381,7 +388,7 @@ export default class Notification extends Component {
                                                                 <Text style={{
                                                                     fontSize: 12,
                                                                     color: '#555DB9'
-                                                                }}>{res.employer.name}.</Text>
+                                                                }}>{predicate}.</Text>
                                                                 <Text style={{
                                                                     fontSize: 10,
                                                                     color: '#8C8C8C',
@@ -474,6 +481,11 @@ export default class Notification extends Component {
                                     case 'hired':
                                         subject = res.employer.name
                                         status = 'hired';
+                                        predicate = res.staffId.fullname
+                                        break;
+                                    case 'task':
+                                        subject = res.employer.name
+                                        status = 'updated your task';
                                         predicate = res.staffId.fullname
                                         break;
                                     default:
