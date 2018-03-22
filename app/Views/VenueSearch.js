@@ -425,7 +425,9 @@ export default class VenueSearch extends Component {
                   isInterested = data.interested[this.props.navigation.state.params.userId].interestedAt.length > 0;
                 }
               }
-              console.log("interesting ",data)
+
+                console.log("userProfile",data)
+                console.log("myProfile",this.props.navigation.state.params.userProfile)
               return (
                 <View key={id} style={styles.body}>
                   <ZVenueCard avatar={data.image} venue={data.name} name={data.type.join(' / ')}
@@ -437,7 +439,11 @@ export default class VenueSearch extends Component {
                               onPressMore={() => this.setState({modalVisible: true})}
                               isAlcohol={this.state.isAlcohol}
                               isDrinks={this.state.isDrinks}
-                              isCocktails={this.state.isCocktails}/>
+                              isCocktails={this.state.isCocktails}
+                              onPress={() => navigate('VProfile', {
+                                  userProfile: data,
+                                  myProfile: this.props.navigation.state.params.userProfile
+                              })}/>
                 </View>
               )
             })

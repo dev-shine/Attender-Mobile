@@ -35,7 +35,7 @@ import {
 
 import API from 'API';
 
-export default class StaffProfile extends Component {
+export default class VenueProfile extends Component {
 
   constructor(props){
     super(props);
@@ -97,9 +97,9 @@ export default class StaffProfile extends Component {
   renderDetails = (userProfile) => {
     return(
       <View style={{justifyContent: 'center', alignItems: 'center'}}>
-        <Text style={{fontSize: 14, marginVertical: 5}}>{userProfile.position.join(' | ')} <Text style={{fontSize: 14, color: '#78757E'}}>{userProfile.frequency}</Text></Text>
+        <Text style={{fontSize: 14, marginVertical: 5}}>{userProfile.services.join(' | ')} <Text style={{fontSize: 14, color: '#78757E'}}>{userProfile.frequency}</Text></Text>
         <NRater />
-        <Text style={{fontSize: 14}}><Text style={{fontSize: 14, color: '#78757E'}}>{userProfile.description.join(' / ')}</Text></Text>
+        <Text style={{fontSize: 14}}><Text style={{fontSize: 14, color: '#78757E'}}>{userProfile.type.join(' / ')}</Text></Text>
       </View>
     )
   }
@@ -272,13 +272,13 @@ export default class StaffProfile extends Component {
   }
 
   renderAvatar = (userProfile) => {
-    if (userProfile.avatar == '' || userProfile.avatar == 'undefined') {
+    if (userProfile.image == '' || userProfile.image == 'undefined') {
       return(
         <ZAvatar largeAvatar={'https://www.nztcc.org/themes/kos/images/avatar.png'} />
       )
     }else {
       return(
-        <ZAvatar largeAvatar={userProfile.avatar} />
+        <ZAvatar largeAvatar={userProfile.image} />
       )
     }
   }
@@ -290,7 +290,7 @@ export default class StaffProfile extends Component {
     return (
       <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
         <ZHeader
-          headerTitle={`${userProfile.fullname}'s Profile`}
+          headerTitle={`${userProfile.name}'s Profile`}
           titleStyle={{fontSize: 14, fontWeight: 'normal'}}
           rightIcon={this.props.navigation.state.params.isUserProfile ? "ios-more" : ""}
           rightIconColor="white"
@@ -302,60 +302,37 @@ export default class StaffProfile extends Component {
         <View style={styles.body}>
           <ZProfileCard styles={{marginTop: -50}}>
             {this.renderAvatar(userProfile)}
-            <ZHero text={userProfile.fullname} styles={{color: '#33314B'}} />
+            <ZHero text={userProfile.name} styles={{color: '#33314B'}} />
             {this.renderDetails(userProfile)}
             {this.renderSendMessage()}
-            <View style={{position: 'absolute', right: -10, top: 40, borderWidth: 1, borderColor: '#9996A0', borderRadius: 15, padding: 5}}>
-              <Text style={{fontSize: 14, color: '#9996A0', fontWeight: 'normal'}}>{userProfile.rateBadge}</Text>
-            </View>
+
           </ZProfileCard>
           <ZCard>
-           <Text style={{textAlign: 'center', color: '#676679', fontSize: 12}}>{userProfile.bio}</Text>
+           <Text style={{textAlign: 'center', color: '#676679', fontSize: 12}}>{userProfile.info}</Text>
           </ZCard>
-          <View style={{flexDirection: 'row'}}>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10, marginVertical: 10, borderRightWidth: 0.5, borderColor: '#E9E9E9'}}>
-              <Text style={{color: '#48465E', fontSize: 16, fontWeight: '500', marginBottom: 3}}>{moment(userProfile.birthdate).fromNow(true)}</Text>
-              <Text style={{color: '#96939D', fontSize: 12, fontWeight: 'normal'}}>Age</Text>
-            </View>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10, marginVertical: 10, borderRightWidth: 0.5, borderColor: '#E9E9E9'}}>
-              <Text style={{color: '#48465E', fontSize: 16, fontWeight: '500', marginBottom: 3, textAlign: 'center'}}>{userProfile.preferredLocation}</Text>
-              <Text style={{color: '#96939D', fontSize: 12, fontWeight: 'normal'}}>Location</Text>
-            </View>
-            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10, marginVertical: 10}}>
-              <Text style={{color: '#48465E', fontSize: 16, fontWeight: '500', marginBottom: 3}}>87%</Text>
-              <Text style={{color: '#96939D', fontSize: 12, fontWeight: 'normal'}}>Response Rate</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.body}>
-          <ZHero text="Experience" styles={{color: '#33314B'}}/>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 20, marginLeft: 20}}>
-            <ZIcon photoUrlSelected={require('../Assets/coctailiconselected.png')} photoUrlUnSelected={require('../Assets/coctailicon.png')} iconText="Venues" isSelected={this.state.isVenue} selectedIcon={()=>[this.setState({isVenue: this.state.isVenue ? false : true}), this.getAllStaffVenue(userProfile)]} />
-            <ZIcon photoUrlSelected={require('../Assets/cardbookicon.png')} photoUrlUnSelected={require('../Assets/cardbookicon.png')} iconText="References" isSelected={this.state.isReference} selectedIcon={()=>this.setState({isReference: this.state.isReference ? false : true})} />
-            <ZIcon photoUrlSelected={require('../Assets/cardchaticon.png')} photoUrlUnSelected={require('../Assets/cardchaticon.png')} iconText="Reviews" isSelected={this.state.isReview} selectedIcon={()=>[this.setState({isReview: this.state.isReview ? false : true}), this.getAllStaffReview(userProfile)]} />
 
-          </View>
         </View>
 
-        {this.renderVenue(userProfile.position)}
-        {this.renderReview()}
 
-        <View style={styles.body}>
-          <ZHero text="Skills" styles={{color: '#33314B'}}/>
-          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 20, marginLeft: 20}}>
-            <ZIcon photoUrlSelected={require('../Assets/languageiconselected.png')} photoUrlUnSelected={require('../Assets/languageicon.png')} iconText="Languages" isSelected={this.state.isLanguage} selectedIcon={()=>this.setState({isLanguage: this.state.isLanguage ? false : true})} />
-            <ZIcon photoUrlSelected={require('../Assets/cardidicon.png')} photoUrlUnSelected={require('../Assets/cardidicon.png')} iconText="Licence" isSelected={this.state.isLicense} selectedIcon={()=>this.setState({isLicense: this.state.isLicense ? false : true})} />
-            <ZIcon photoUrlSelected={require('../Assets/Certificatesiconselected.png')} photoUrlUnSelected={require('../Assets/Certificatesicon.png')} iconText="Certificates" isSelected={this.state.isCertificate} selectedIcon={()=>this.setState({isCertificate: this.state.isCertificate ? false : true})}/>
-            <ZIcon photoUrlSelected={require('../Assets/cardvideoicon.png')} photoUrlUnSelected={require('../Assets/cardvideoicon.png')} iconText="Videos" isSelected={this.state.isVideo} selectedIcon={()=>this.setState({isVideo: this.state.isVideo ? false : true})} />
-          </View>
-        </View>
+        {/*{this.renderVenue(userProfile.position)}*/}
+        {/*{this.renderReview()}*/}
 
-        <View style={{flex: 1, width: '100%', marginBottom: 40}}>
-          {this.renderLanguage(userProfile.languages)}
-          {this.renderLicense(userProfile.licenses)}
-          {this.renderCertificate(userProfile.certificates)}
-          {this.renderVideo(userProfile.videos)}
-        </View>
+        {/*<View style={styles.body}>*/}
+          {/*<ZHero text="Skills" styles={{color: '#33314B'}}/>*/}
+          {/*<View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: 20, marginLeft: 20}}>*/}
+            {/*<ZIcon photoUrlSelected={require('../Assets/languageiconselected.png')} photoUrlUnSelected={require('../Assets/languageicon.png')} iconText="Languages" isSelected={this.state.isLanguage} selectedIcon={()=>this.setState({isLanguage: this.state.isLanguage ? false : true})} />*/}
+            {/*<ZIcon photoUrlSelected={require('../Assets/cardidicon.png')} photoUrlUnSelected={require('../Assets/cardidicon.png')} iconText="Licence" isSelected={this.state.isLicense} selectedIcon={()=>this.setState({isLicense: this.state.isLicense ? false : true})} />*/}
+            {/*<ZIcon photoUrlSelected={require('../Assets/Certificatesiconselected.png')} photoUrlUnSelected={require('../Assets/Certificatesicon.png')} iconText="Certificates" isSelected={this.state.isCertificate} selectedIcon={()=>this.setState({isCertificate: this.state.isCertificate ? false : true})}/>*/}
+            {/*<ZIcon photoUrlSelected={require('../Assets/cardvideoicon.png')} photoUrlUnSelected={require('../Assets/cardvideoicon.png')} iconText="Videos" isSelected={this.state.isVideo} selectedIcon={()=>this.setState({isVideo: this.state.isVideo ? false : true})} />*/}
+          {/*</View>*/}
+        {/*</View>*/}
+
+        {/*<View style={{flex: 1, width: '100%', marginBottom: 40}}>*/}
+          {/*{this.renderLanguage(userProfile.languages)}*/}
+          {/*{this.renderLicense(userProfile.licenses)}*/}
+          {/*{this.renderCertificate(userProfile.certificates)}*/}
+          {/*{this.renderVideo(userProfile.videos)}*/}
+        {/*</View>*/}
 
       </ScrollView>
     );

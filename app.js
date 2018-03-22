@@ -16,6 +16,8 @@ import ZEventCard from 'ZEventCard';
 
 import dashboard from './app/Dashboard';
 import StaffProfile from './app/Views/StaffProfile';
+import VenueProfile from './app/Views/VenueProfile';
+import EventProfile from './app/Views/EventProfile';
 import NewMessage from './app/Views/NewMessage';
 import VenueStaff from './app/Views/VenueStaff';
 import CEvent from './app/Views/CreateEvent';
@@ -292,7 +294,9 @@ const App = StackNavigator(
     Services: {screen: Services},
     OnboardingScreen: {screen: OnboardingScreen},
     Dashboard: {screen: dashboard},
-    SProfile: {screen: StaffProfile},
+      SProfile: {screen: StaffProfile},
+      VProfile: {screen: VenueProfile},
+      EProfile: {screen: EventProfile},
     NMessage: {screen: NewMessage},
     VStaff: {screen: VenueStaff},
     CreatEvent: {screen: CEvent},

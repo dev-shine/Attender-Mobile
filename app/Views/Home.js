@@ -147,11 +147,11 @@ export default class Home extends Component {
                 }
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigate('VenueSearch', {fullname: staffId.fullname, userId: staffId._id})}>
+              <TouchableOpacity onPress={() => navigate('VenueSearch', {fullname: staffId.fullname, userId: staffId._id, userProfile: user})}>
                 <ZTextMedium text="Browse Venues" styles={{fontSize: 18}}/>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigate('BrowseEvent', {fullname: staffId.fullname, userId: staffId._id})}>
+              <TouchableOpacity onPress={() => navigate('BrowseEvent', {fullname: staffId.fullname, userId: staffId._id, userProfile: user})}>
                 <ZTextMedium text="Browse Events" styles={{fontSize: 18}}/>
               </TouchableOpacity>
 
