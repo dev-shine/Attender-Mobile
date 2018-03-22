@@ -424,7 +424,7 @@ export default class EventProfile extends Component {
 
                     </ZProfileCard>
                     <ZCard>
-                        <Text style={{textAlign: 'center', color: '#676679', fontSize: 12}}>{userProfile.info}</Text>
+                        <Text style={{textAlign: 'center', color: '#676679', fontSize: 12}}>{userProfile.description}</Text>
                     </ZCard>
 
                 </View>
