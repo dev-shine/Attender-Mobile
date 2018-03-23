@@ -8,6 +8,7 @@ import ZMuteText from 'ZMuteText';
 import ZText from 'ZText';
 import ZNumericStepperBadge from 'ZNumericStepperBadge';
 import ZRoundedButton from 'ZRoundedButton';
+import ZButtonOutline from 'ZButtonOutline';
 import ZFullCard from 'ZFullCard';
 import ZProfileCard from 'ZProfileCard';
 import ZAvatar from 'ZAvatar';
@@ -396,6 +397,37 @@ export default class EventProfile extends Component {
         }
     }
 
+    renderInterestedButton = () => {
+        let data = this.props.navigation.state.params.userProfile
+        let userId = this.props.navigation.state.params.myProfile.staffId._id
+        let isInterested = false;
+        if (data.interested != undefined) {
+            if (data.interested[userId] != undefined) {
+                isInterested = data.interested[userId].interestedAt.length > 0;
+            }
+        }
+        if (isInterested) {
+            return
+            <View style={{marginVertical: 10}}>
+                <ZButtonOutline name="I'm Interested"
+                                onPress={() => this.onSelectInterested(data._id)}
+                                styles={{backgroundColor: '#5F5FBA'}}
+                                textStyles={{color: 'white'}}/>
+            </View>
+        } else {
+            return
+            <View style={{marginVertical: 10}}>
+                <ZButtonOutline name="I'm Interested" onPress={() => this.onSelectInterested(data._id)}/>
+            </View>
+        }
+    }
+
+    onSelectInterested = (_id) => {
+        API.post(`venue/${_id}/interest`, {}).then((res) => {
+            console.log('interested', res)
+        });
+    }
+
     render() {
         const {navigate} = this.props.navigation;
         const {userProfile, myProfile} = this.props.navigation.state.params;
@@ -420,11 +452,15 @@ export default class EventProfile extends Component {
                         {this.renderAvatar(userProfile)}
                         <ZHero text={userProfile.name} styles={{color: '#33314B'}}/>
                         {this.renderDetails(userProfile)}
-                        {this.renderSendMessage()}
+                        {this.renderInterestedButton()}
 
                     </ZProfileCard>
                     <ZCard>
-                        <Text style={{textAlign: 'center', color: '#676679', fontSize: 12}}>{userProfile.description}</Text>
+                        <Text style={{
+                            textAlign: 'center',
+                            color: '#676679',
+                            fontSize: 12
+                        }}>{userProfile.description}</Text>
                     </ZCard>
 
                 </View>

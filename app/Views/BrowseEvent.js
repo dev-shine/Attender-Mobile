@@ -353,9 +353,6 @@ export default class BrowseEvent extends Component {
                             }
                         }
 
-
-                        console.log("userProfile",data)
-                        console.log("myProfile",this.props.navigation.state.params.userProfile)
                         return (
                             <View key={id} style={styles.body}>
                                 <ZEventCard event={data.name} image={data.image} type={null} interested={true}

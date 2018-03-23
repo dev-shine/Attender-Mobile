@@ -426,8 +426,9 @@ export default class VenueSearch extends Component {
                 }
               }
 
-                console.log("userProfile",data)
-                console.log("myProfile",this.props.navigation.state.params.userProfile)
+                console.log(this.props.navigation.state.params.userId)
+                console.log(this.props.navigation.state.params.userProfile)
+
               return (
                 <View key={id} style={styles.body}>
                   <ZVenueCard avatar={data.image} venue={data.name} name={data.type.join(' / ')}
