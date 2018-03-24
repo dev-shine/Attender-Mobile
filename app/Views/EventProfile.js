@@ -39,6 +39,15 @@ export default class EventProfile extends Component {
 
     constructor(props) {
         super(props);
+
+        let data = props.navigation.state.params.userProfile
+        let userId = props.navigation.state.params.myProfile.staffId._id
+        let isInterested = false;
+        if (data.interested != undefined) {
+            if (data.interested[userId] != undefined) {
+                isInterested = data.interested[userId].interestedAt.length > 0;
+            }
+        }
         this.state = {
             selected: true,
             experience: [],
@@ -54,7 +63,8 @@ export default class EventProfile extends Component {
             isLanguage: false,
             isLicense: false,
             isCertificate: false,
-            isVideo: false
+            isVideo: false,
+            isInterested
         }
     }
 
@@ -399,32 +409,29 @@ export default class EventProfile extends Component {
 
     renderInterestedButton = () => {
         let data = this.props.navigation.state.params.userProfile
-        let userId = this.props.navigation.state.params.myProfile.staffId._id
-        let isInterested = false;
-        if (data.interested != undefined) {
-            if (data.interested[userId] != undefined) {
-                isInterested = data.interested[userId].interestedAt.length > 0;
-            }
-        }
-        if (isInterested) {
-            return
-            <View style={{marginVertical: 10}}>
-                <ZButtonOutline name="I'm Interested"
-                                onPress={() => this.onSelectInterested(data._id)}
-                                styles={{backgroundColor: '#5F5FBA'}}
-                                textStyles={{color: 'white'}}/>
-            </View>
+        if (this.state.isInterested) {
+            return (
+                <View style={{marginVertical: 10}}>
+                    <ZButtonOutline name="I'm Interested"
+                                    onPress={() => this.onSelectInterested(data._id)}
+                                    styles={{backgroundColor: '#5F5FBA'}}
+                                    textStyles={{color: 'white'}}/>
+                </View>
+            )
         } else {
-            return
-            <View style={{marginVertical: 10}}>
-                <ZButtonOutline name="I'm Interested" onPress={() => this.onSelectInterested(data._id)}/>
-            </View>
+            return (
+                <View style={{marginVertical: 10}}>
+                    <ZButtonOutline name="I'm Interested" onPress={() => this.onSelectInterested(data._id)}/>
+                </View>
+            )
         }
     }
 
     onSelectInterested = (_id) => {
         API.post(`events/${_id}/interest`, {}).then((res) => {
             console.log('interested', res)
+            this.setState({isInterested: !this.state.isInterested})
+            this.props.navigation.state.params.refresh()
         });
     }
 

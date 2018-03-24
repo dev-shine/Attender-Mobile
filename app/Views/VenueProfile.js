@@ -39,6 +39,14 @@ export default class VenueProfile extends Component {
 
     constructor(props) {
         super(props);
+        let data = props.navigation.state.params.userProfile
+        let userId = props.navigation.state.params.myProfile.staffId._id
+        let isInterested = false;
+        if (data.interested != undefined) {
+            if (data.interested[userId] != undefined) {
+                isInterested = data.interested[userId].interestedAt.length > 0;
+            }
+        }
         this.state = {
             selected: true,
             experience: [],
@@ -54,7 +62,8 @@ export default class VenueProfile extends Component {
             isLanguage: false,
             isLicense: false,
             isCertificate: false,
-            isVideo: false
+            isVideo: false,
+            isInterested
         }
     }
 
@@ -396,17 +405,7 @@ export default class VenueProfile extends Component {
 
     renderInterestedButton = () => {
         let data = this.props.navigation.state.params.userProfile
-        let userId = this.props.navigation.state.params.myProfile.staffId._id
-        let isInterested = false;
-        if (data.interested != undefined) {
-            if (data.interested[userId] != undefined) {
-                isInterested = data.interested[userId].interestedAt.length > 0;
-            }
-        }
-        console.log(isInterested)
-        console.log(data)
-        console.log(userId)
-        if (isInterested) {
+        if (this.state.isInterested) {
             return (
                 <View style={{marginVertical: 10}}>
                     <ZButtonOutline name="I'm Interested"
@@ -427,6 +426,8 @@ export default class VenueProfile extends Component {
     onSelectInterested = (_id) => {
         API.post(`venue/${_id}/interest`, {}).then((res) => {
             console.log('interested', res)
+            this.setState({isInterested: !this.state.isInterested})
+            this.props.navigation.state.params.refresh()
         });
     }
 

@@ -363,7 +363,8 @@ export default class BrowseEvent extends Component {
                                             onPressEvent={() => this.setState({modalVisible: true})}
                                             onPress={() => navigate('EProfile', {
                                                 userProfile: data,
-                                                myProfile: this.props.navigation.state.params.userProfile
+                                                myProfile: this.props.navigation.state.params.userProfile,
+                                                refresh: this.getAllEvents
                                             })}/>
                             </View>
                         )
