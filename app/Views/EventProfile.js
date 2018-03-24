@@ -423,7 +423,7 @@ export default class EventProfile extends Component {
     }
 
     onSelectInterested = (_id) => {
-        API.post(`venue/${_id}/interest`, {}).then((res) => {
+        API.post(`events/${_id}/interest`, {}).then((res) => {
             console.log('interested', res)
         });
     }
