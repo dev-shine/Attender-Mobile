@@ -346,7 +346,6 @@ export default class StaffProfile extends Component {
             <ZIcon photoUrlSelected={require('../Assets/languageiconselected.png')} photoUrlUnSelected={require('../Assets/languageicon.png')} iconText="Languages" isSelected={this.state.isLanguage} selectedIcon={()=>this.setState({isLanguage: this.state.isLanguage ? false : true})} />
             <ZIcon photoUrlSelected={require('../Assets/cardidicon.png')} photoUrlUnSelected={require('../Assets/cardidicon.png')} iconText="Licence" isSelected={this.state.isLicense} selectedIcon={()=>this.setState({isLicense: this.state.isLicense ? false : true})} />
             <ZIcon photoUrlSelected={require('../Assets/Certificatesiconselected.png')} photoUrlUnSelected={require('../Assets/Certificatesicon.png')} iconText="Certificates" isSelected={this.state.isCertificate} selectedIcon={()=>this.setState({isCertificate: this.state.isCertificate ? false : true})}/>
-            <ZIcon photoUrlSelected={require('../Assets/cardvideoicon.png')} photoUrlUnSelected={require('../Assets/cardvideoicon.png')} iconText="Videos" isSelected={this.state.isVideo} selectedIcon={()=>this.setState({isVideo: this.state.isVideo ? false : true})} />
           </View>
         </View>
 

@@ -56,7 +56,6 @@ export default class ZFullCard extends Component {
               <ZIcon photoUrlSelected={require('../Assets/languageiconselected.png')} photoUrlUnSelected={require('../Assets/languageicon.png')} isSelected={false} small={true} selectedIcon={this.props.isLanguage} />
               <ZIcon photoUrlSelected={require('../Assets/cardidicon.png')} photoUrlUnSelected={require('../Assets/cardidicon.png')} isSelected={false} small={true} selectedIcon={this.props.isLicense} />
               <ZIcon photoUrlSelected={require('../Assets/Certificatesiconselected.png')} photoUrlUnSelected={require('../Assets/Certificatesicon.png')} isSelected={false} small={true} selectedIcon={this.props.isCertificate} />
-              <ZIcon photoUrlSelected={require('../Assets/cardvideoicon.png')} photoUrlUnSelected={require('../Assets/cardvideoicon.png')} isSelected={false} small={true} selectedIcon={this.props.isVideo} />
 
             </ZSliderCard>
           </View>
@@ -69,7 +68,6 @@ export default class ZFullCard extends Component {
               <ZIcon photoUrlSelected={require('../Assets/languageiconselected.png')} photoUrlUnSelected={require('../Assets/languageicon.png')} isSelected={false} small={true} />
               <ZIcon photoUrlSelected={require('../Assets/cardidicon.png')} photoUrlUnSelected={require('../Assets/cardidicon.png')} isSelected={false} small={true} />
               <ZIcon photoUrlSelected={require('../Assets/Certificatesiconselected.png')} photoUrlUnSelected={require('../Assets/Certificatesicon.png')} isSelected={false} small={true} />
-              <ZIcon photoUrlSelected={require('../Assets/cardvideoicon.png')} photoUrlUnSelected={require('../Assets/cardvideoicon.png')} isSelected={false} small={true} />
 
             </ZSliderCard>
           </View>
