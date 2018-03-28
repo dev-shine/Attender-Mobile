@@ -8,6 +8,7 @@ import ZMuteText from 'ZMuteText';
 import ZText from 'ZText';
 import ZNumericStepperBadge from 'ZNumericStepperBadge';
 import ZRoundedButton from 'ZRoundedButton';
+import ZButtonOutline from 'ZButtonOutline';
 import ZFullCard from 'ZFullCard';
 import ZProfileCard from 'ZProfileCard';
 import ZAvatar from 'ZAvatar';
@@ -38,6 +39,15 @@ export default class EventProfile extends Component {
 
     constructor(props) {
         super(props);
+
+        let data = props.navigation.state.params.userProfile
+        let userId = props.navigation.state.params.myProfile.staffId._id
+        let isInterested = false;
+        if (data.interested != undefined) {
+            if (data.interested[userId] != undefined) {
+                isInterested = data.interested[userId].interestedAt.length > 0;
+            }
+        }
         this.state = {
             selected: true,
             experience: [],
@@ -53,7 +63,8 @@ export default class EventProfile extends Component {
             isLanguage: false,
             isLicense: false,
             isCertificate: false,
-            isVideo: false
+            isVideo: false,
+            isInterested
         }
     }
 
@@ -396,6 +407,34 @@ export default class EventProfile extends Component {
         }
     }
 
+    renderInterestedButton = () => {
+        let data = this.props.navigation.state.params.userProfile
+        if (this.state.isInterested) {
+            return (
+                <View style={{marginVertical: 10}}>
+                    <ZButtonOutline name="I'm Interested"
+                                    onPress={() => this.onSelectInterested(data._id)}
+                                    styles={{backgroundColor: '#5F5FBA'}}
+                                    textStyles={{color: 'white'}}/>
+                </View>
+            )
+        } else {
+            return (
+                <View style={{marginVertical: 10}}>
+                    <ZButtonOutline name="I'm Interested" onPress={() => this.onSelectInterested(data._id)}/>
+                </View>
+            )
+        }
+    }
+
+    onSelectInterested = (_id) => {
+        API.post(`events/${_id}/interest`, {}).then((res) => {
+            console.log('interested', res)
+            this.setState({isInterested: !this.state.isInterested})
+            this.props.navigation.state.params.refresh()
+        });
+    }
+
     render() {
         const {navigate} = this.props.navigation;
         const {userProfile, myProfile} = this.props.navigation.state.params;
@@ -420,11 +459,15 @@ export default class EventProfile extends Component {
                         {this.renderAvatar(userProfile)}
                         <ZHero text={userProfile.name} styles={{color: '#33314B'}}/>
                         {this.renderDetails(userProfile)}
-                        {this.renderSendMessage()}
+                        {this.renderInterestedButton()}
 
                     </ZProfileCard>
                     <ZCard>
-                        <Text style={{textAlign: 'center', color: '#676679', fontSize: 12}}>{userProfile.description}</Text>
+                        <Text style={{
+                            textAlign: 'center',
+                            color: '#676679',
+                            fontSize: 12
+                        }}>{userProfile.description}</Text>
                     </ZCard>
 
                 </View>
