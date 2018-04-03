@@ -246,7 +246,7 @@ export default class SignUp extends Component {
 
     API.post('auth/register', this.refs.form.getValues())
     .then((res)=>{
-      console.log(res);
+      console.warn('Test',res);
       if(res.status){
         this.setState({isLoading: false});
         navigate('ConfirmationSent', {user: this.refs.form.getValues()});

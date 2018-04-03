@@ -98,9 +98,9 @@ export default class Home extends Component {
         <ScrollView>
           <View style={{padding: 30}}>
 
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10}}>
-              <View style={{flex: 1, flexDirection: 'column'}}>
-                <Image source={require('../Assets/logo.png')} style={{width: 50, height: 50, borderRadius: 25, marginLeft: 10, resizeMode: 'stretch'}}/>
+            <View style={{flexDirection: 'row', marginTop: 10}}>
+              <View style={{flexDirection: 'column', alignItems: 'center', width: 100}}>
+                <Image source={require('../Assets/logo.png')} style={{width: 50, height: 50, borderRadius: 25, resizeMode: 'stretch'}}/>
                 <Text style={{color: 'white', backgroundColor: 'transparent', fontSize: 20}}>Attender</Text>
               </View>
             </View>

@@ -95,7 +95,7 @@ const autoLogin = NavigationActions.reset({
   ]
 });
 
-export default class Attender extends Component {
+class Attender extends Component {
 
   constructor(props) {
     super(props);
@@ -364,4 +364,4 @@ const styles = StyleSheet.create({
   }
 });
 
-AppRegistry.registerComponent('Attender', () => App);
+export default App;

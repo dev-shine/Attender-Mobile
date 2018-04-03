@@ -176,7 +176,7 @@ export default class VenueStaff extends Component {
 
     onDirectHire = () => {
         API.post(`hire/${this.state.selectedStaff.staff._id}`, {}).then((res) => {
-            console.log(res);
+            console.warn('Something', res);
             if (res.status) {
                 this.setState({isTrialShow: false, isActiveContent: true})
                 this.getActiveStaffs();
@@ -231,7 +231,7 @@ export default class VenueStaff extends Component {
 
     getActiveStaffs = () => {
         API.get(`active-staffs?filters=${this.state.types.join()}`).then((res) => {
-            console.log('ActiveStaff', res)
+            console.log(res)
             if (res.status) {
                 this.setState({
                     data1: res.staffs,

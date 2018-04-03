@@ -115,15 +115,13 @@ export default class Home extends Component {
 
           <View style={{padding: 30}}>
 
-            <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-
-              <View style={{flex: 1, flexDirection: 'column'}}>
-                <Image source={require('../Assets/logo.png')} style={{width: 50, height: 50, borderRadius: 25, marginLeft: 10, resizeMode: 'stretch'}}/>
+            <View style={{flexDirection: 'row', marginTop: 10}}>
+              <View style={{flexDirection: 'column', alignItems: 'center', width: 100}}>
+                <Image source={require('../Assets/logo.png')} style={{width: 50, height: 50, borderRadius: 25, resizeMode: 'stretch'}}/>
                 <Text style={{color: 'white', backgroundColor: 'transparent', fontSize: 20}}>Attender</Text>
               </View>
-
             </View>
-
+            
             <View style={{flexDirection: 'row', marginTop: 50}}>
               <Image source={{uri: staffId.avatar || 'https://www.nztcc.org/themes/kos/images/avatar.png'}} style={{height: 70, borderRadius: 35, width: 70, resizeMode: (Platform.OS === 'ios' ? 'cover' : 'cover')}}/>
               <View style={{flex: 1, marginLeft: 15, marginTop: 15}}>
