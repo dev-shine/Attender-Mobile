@@ -34,6 +34,7 @@ const {
 import API from 'API';
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import {
   AppRegistry,
   StyleSheet,
@@ -54,7 +55,7 @@ import {
   StackNavigator,
 } from 'react-navigation';
 
-export default class Login extends Component {
+class Login extends Component {
 
   constructor(props) {
     super(props);
@@ -138,6 +139,7 @@ export default class Login extends Component {
       console.log(res);
       if(res.status) {
         API.REQUEST_TOKEN = res.token;
+        this.props.dispatch({ type: 'GET_AUTHENTICATION', payload: res.token });
         AsyncStorage.setItem('Token', JSON.stringify(res.token));
         this.getCurrentUser();
       } else {
@@ -283,3 +285,18 @@ const styles = StyleSheet.create({
     width: null
   }
 });
+
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ...state
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    dispatch: dispatch,
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
