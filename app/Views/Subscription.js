@@ -89,6 +89,17 @@ class Subscription extends Component {
     }
   }
 
+  renderBack() {
+    const { navigate } = this.props.navigation;
+    return (
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginLeft: 20 }}>
+        <TouchableOpacity onPress={() => navigate('Main')}>
+          <Icon name="ios-arrow-round-back-outline" size={35} color="#BEBEBE" />
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   renderHeader() {
     return (
       <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start'}}>
@@ -115,7 +126,8 @@ class Subscription extends Component {
     const { navigate } = this.props.navigation;
     return (
       <ScrollView>
-        <View style={{padding: 30}}>
+        {this.renderBack()}
+        <View style={{paddingLeft: 30, paddingRight: 30 }}>
           <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginTop: 10}}>
             {this.renderHeader()}
           </View>
@@ -132,7 +144,7 @@ class Subscription extends Component {
           </View>
           <SubscriptionButton 
             title="Attender Premium"
-            onPress={() => console.warn('Test') }
+            onPress={() => navigate('SubscriptionManage') }
           />
           <View style={{ marginTop: 50 }}>
             <Text style={{
@@ -147,7 +159,7 @@ class Subscription extends Component {
           </View>
           <SubscriptionButton
             title="John Smith"
-            onPress={() => console.warn('Test') }
+            onPress={() => navigate('SubscriptionManage') }
           />
           <SubscriptionButton 
             title="Anne Smith"
