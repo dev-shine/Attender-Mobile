@@ -158,7 +158,7 @@ class Home extends Component {
                 <ZTextMedium text="Settings" />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigate('Subscription')}>
+              <TouchableOpacity onPress={() => navigate('Subscription', { from: this.props.navigation.state.key })}>
                 <ZTextMedium text="Subscription" />
               </TouchableOpacity>
 

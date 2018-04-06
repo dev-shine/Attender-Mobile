@@ -133,7 +133,7 @@ class SubscriptionSubscribe extends Component {
   }
 
   renderButtons() {
-    const { navigate } = this.props.navigation;
+    const { navigate, goBack } = this.props.navigation;
     return (
       <View style={{flexDirection: 'row', marginBottom: 8, alignItems: 'center', justifyContent: 'center'}}>
         <TouchableOpacity onPress={() => navigate('SubscriptionManage')}>
@@ -141,7 +141,7 @@ class SubscriptionSubscribe extends Component {
             <Text style={{fontFamily: 'AvenirNextLTPro-Demi', fontSize: 14, color: 'white'}}>Subscribe Now</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigate('Main')}>
+        <TouchableOpacity onPress={() => goBack(this.props.from)}>
           <View style={{borderRadius: 5, backgroundColor: 'transparent', padding: 5, margin: 10, borderWidth: 1, borderColor: 'white', width: 140, height: 40, borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{fontFamily: 'AvenirNextLTPro-Demi', fontSize: 14, color: 'white'}}>No Thanks</Text>
           </View>

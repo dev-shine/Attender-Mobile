@@ -54,7 +54,7 @@ const SubscriptionButton = (props) => {
           >
           {props.title}
         </Text>
-        <Icon name="ios-arrow-forward" size={20} color="#fff" />
+        <Icon name="ios-arrow-forward" size={20} color="#fff" style={{ backgroundColor: 'transparent' }} />
       </View>
     </TouchableOpacity>
   );
@@ -75,7 +75,7 @@ class Subscription extends Component {
 
   componentDidMount() {
     const { navigate } = this.props.navigation;
-    // navigate('SubscriptionSubscribe');
+    navigate('SubscriptionSubscribe', { from: this.props.from });
   }
 
   renderOnShowLoading = () => {
@@ -94,7 +94,7 @@ class Subscription extends Component {
     return (
       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginLeft: 20 }}>
         <TouchableOpacity onPress={() => navigate('Main')}>
-          <Icon name="ios-arrow-round-back-outline" size={35} color="#BEBEBE" />
+          <Icon name="ios-arrow-round-back-outline" size={35} color="#BEBEBE" style={{ backgroundColor: 'transparent' }} />
         </TouchableOpacity>
       </View>
     );

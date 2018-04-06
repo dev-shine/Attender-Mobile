@@ -58,11 +58,11 @@ class SubscriptionManage extends Component {
   }
 
   renderHeader() {
-    const { navigate } = this.props.navigation;
+    const { goBack } = this.props.navigation;
     return (
       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 8, marginLeft: 20 }}>
-        <TouchableOpacity onPress={() => navigate('Subscription')}>
-          <Icon name="ios-arrow-round-back-outline" size={35} color="#BEBEBE" />
+        <TouchableOpacity onPress={() => goBack(this.state.from)}>
+          <Icon name="ios-arrow-round-back-outline" size={35} color="#BEBEBE" style={{ backgroundColor: 'transparent' }} />
         </TouchableOpacity>
       </View>
     );
