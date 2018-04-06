@@ -23,6 +23,43 @@ import {
 } from 'react-navigation';
 
 import API from 'API';
+
+const SubscriptionButton = (props) => {
+  return (
+    <TouchableOpacity
+      style={{ 
+        marginTop: 20, 
+        borderBottomColor: '#fff',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+      }}
+      onPress={() => {
+        props.onPress();
+      }}
+    >
+      <View 
+        style={{ 
+          flexDirection: 'row', 
+          borderBottomColor: '#fff',
+          borderBottomWidth: StyleSheet.hairlineWidth,
+          justifyContent: 'space-between'
+        }}
+      >
+        <Text style={{
+            fontFamily: 'AvenirNextLTPro-Regular', 
+            color: '#fff',
+            backgroundColor: 'transparent', 
+            fontSize: 14,
+            paddingBottom: 4,
+            }}
+          >
+          {props.title}
+        </Text>
+        <Icon name="ios-arrow-forward" size={20} color="#fff" />
+      </View>
+    </TouchableOpacity>
+  );
+}
+
 class Subscription extends Component {
 
   constructor(props) {
@@ -82,7 +119,50 @@ class Subscription extends Component {
           <View style={{flexDirection: 'row', justifyContent: 'flex-start', marginTop: 10}}>
             {this.renderHeader()}
           </View>
+          <View style={{ marginTop: 50 }}>
+            <Text style={{
+                fontFamily: 'AvenirNextLTPro-Medium', 
+                color: '#fff',
+                backgroundColor: 'transparent', 
+                fontSize: 14, 
+                }}
+              >
+              Your Subscriptions
+            </Text>
+          </View>
+          <SubscriptionButton 
+            title="Attender Premium"
+            onPress={() => console.warn('Test') }
+          />
+          <View style={{ marginTop: 50 }}>
+            <Text style={{
+                fontFamily: 'AvenirNextLTPro-Medium', 
+                color: '#fff',
+                backgroundColor: 'transparent', 
+                fontSize: 14, 
+                }}
+              >
+              Managing Staff
+            </Text>
+          </View>
+          <SubscriptionButton
+            title="John Smith"
+            onPress={() => console.warn('Test') }
+          />
+          <SubscriptionButton 
+            title="Anne Smith"
+            onPress={() => console.warn('Test') }
+          />
+          <SubscriptionButton 
+            title="Juan Pedro"
+            onPress={() => console.warn('Test') }
+          />
+          <SubscriptionButton 
+            title="Rizal Jose"
+            onPress={() => console.warn('Test') }
+          />
         </View>
+        
       </ScrollView>
     );
   }
