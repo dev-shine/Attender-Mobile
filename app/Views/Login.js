@@ -34,7 +34,7 @@ const {
 import API from 'API';
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import {
   AppRegistry,
   StyleSheet,
@@ -116,6 +116,7 @@ class Login extends Component {
     const { navigate } = this.props.navigation;
     API.get('auth/current').then((res) => {
       if(res.status){
+        this.props.dispatch({ type: 'SET_USERDATA', payload: res.data });
         AsyncStorage.setItem('User', JSON.stringify(res.data));
         this.setState({isLoading: false});
         if (res.data.hasProfile) {
@@ -139,7 +140,7 @@ class Login extends Component {
       console.log(res);
       if(res.status) {
         API.REQUEST_TOKEN = res.token;
-        this.props.dispatch({ type: 'GET_AUTHENTICATION', payload: res.token });
+        this.props.dispatch({ type: 'SET_AUTHENTICATION', payload: res.token });
         AsyncStorage.setItem('Token', JSON.stringify(res.token));
         this.getCurrentUser();
       } else {
