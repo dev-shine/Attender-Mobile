@@ -19,22 +19,28 @@ import {
   AsyncStorage
 } from 'react-native';
 
+import { bindActionCreators } from 'redux';
+
 import {
   StackNavigator,
 } from 'react-navigation';
+
+import * as actions from '../Reducers/subscriptionActions';
 
 import API from 'API';
 class SubscriptionManage extends Component {
 
   constructor(props) {
     super(props);
+    const { state } = props.navigation;
+    const premium = state.params.type === "premium";
     this.state = {
       isLoading: false,
-      title: 'Your Subscription',
-      type: 'Attender Premium',
-      price: '$49',
-      purchase: moment().format('MMMM D YYYY'),
-      expire: moment().add(1, 'M').add(1, 'd').format('MMMM D YYYY'),
+      title: premium ? 'Your Subscription' : 'Managing Staff',
+      type: premium ? 'Attender Premium' : state.params.staff.staffId.fullname,
+      price: `\$${state.params.staff.price}`,
+      purchase: moment(state.params.staff.purchaseDate).format('MMMM D YYYY'),
+      expire: moment(state.params.staff.expireDate).format('MMMM D YYYY'),
     }
   }
 
@@ -43,7 +49,6 @@ class SubscriptionManage extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props)
   }
 
   renderOnShowLoading = () => {
@@ -69,12 +74,39 @@ class SubscriptionManage extends Component {
   }
 
   renderButtons() {
-    const { navigate } = this.props.navigation;
+    const { goBack, state } = this.props.navigation;
+    const { subscription } = this.props.Subscription
+    const premium = state.params.type === "premium";
+    let subscribe = true;
+    if (premium) {
+      subscribe = subscription.status === 'subscribe';
+    } else {
+      subscribe = state.params.staff.status === 'subscribe';
+    }
     return (
       <View style={{flexDirection: 'row', marginBottom: 8, alignItems: 'center', justifyContent: 'center'}}>
-        <TouchableOpacity onPress={() => navigate('SubscriptionManage')}>
-          <View style={{borderRadius: 5, backgroundColor: '#5FDAE9', padding: 5, margin: 10, width: 180, height: 40, borderRadius: 30, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontFamily: 'AvenirNextLTPro-Demi', fontSize: 14, color: 'white'}}>Cancel Subscription</Text>
+        <TouchableOpacity 
+          onPress={() =>  {
+            if(premium) {
+              this.props.actions.cancelPremium((data) => {
+                this.props.actions.checkSubscription((data) => {
+                  if (data.status) {
+                    this.props.dispatch({ type: 'SET_SUBSCRIPTION', payload: data.subscription });
+                  }
+                });
+              });
+            } else {
+              this.props.actions.cancelManage(state.params.staff.staffId._id, (data) => {
+                this.props.actions.getStaffSubscriptions(data => {
+                  this.props.dispatch({ type: 'SET_STAFF_SUBSCRIPTION', payload: data.subscriptions });
+                  goBack();
+                });
+              });
+            }
+          }}
+        >
+          <View style={{borderRadius: 5, backgroundColor: subscribe ? '#5FDAE9' : 'red', padding: 5, margin: 10, width: 180, height: 40, borderRadius: 30, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{fontFamily: 'AvenirNextLTPro-Demi', fontSize: 14, color: 'white'}}>{subscribe ? 'Cancel Subscription' : 'Cancelled Subscription' }</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -208,6 +240,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     dispatch: dispatch,
+    actions: bindActionCreators(actions, dispatch),
   };
 }
 

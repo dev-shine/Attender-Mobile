@@ -9,6 +9,7 @@
   "dependencies": {
     "@ptomasroos/react-native-multi-slider": "0.0.10",
     "adonis-websocket-client": "^1.0.2",
+    "frisbee": "^1.6.4",
     "moment": "^2.18.1",
     "node-gcm": "^0.14.10",
     "react": "16.0.0-alpha.12",
@@ -35,7 +36,8 @@
     "react-navigation": "^1.0.0-beta.11",
     "react-redux": "^5.0.7",
     "redux": "^3.7.2",
-    "redux-saga": "^0.16.0"
+    "redux-saga": "^0.16.0",
+    "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
     "babel-jest": "20.0.3",

@@ -17,11 +17,12 @@ import {
   ActivityIndicator,
   AsyncStorage
 } from 'react-native';
-
+import { bindActionCreators } from 'redux';
 import {
   StackNavigator,
 } from 'react-navigation';
 
+import * as actions from '../Reducers/subscriptionActions';
 import API from 'API';
 
 const SubscriptionButton = (props) => {
@@ -66,6 +67,7 @@ class Subscription extends Component {
     super(props);
     this.state = {
       isLoading: false,
+      staffs: [],
     }
   }
 
@@ -74,8 +76,9 @@ class Subscription extends Component {
   };
 
   componentDidMount() {
-    const { navigate } = this.props.navigation;
-    navigate('SubscriptionSubscribe', { from: this.props.from });
+    this.props.actions.getStaffSubscriptions(data => {
+      this.props.dispatch({ type: 'SET_STAFF_SUBSCRIPTION', payload: data.subscriptions });
+    });
   }
 
   renderOnShowLoading = () => {
@@ -90,10 +93,10 @@ class Subscription extends Component {
   }
 
   renderBack() {
-    const { navigate } = this.props.navigation;
+    const { goBack } = this.props.navigation;
     return (
       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', marginLeft: 20 }}>
-        <TouchableOpacity onPress={() => navigate('Main')}>
+        <TouchableOpacity onPress={() => goBack() }>
           <Icon name="ios-arrow-round-back-outline" size={35} color="#BEBEBE" style={{ backgroundColor: 'transparent' }} />
         </TouchableOpacity>
       </View>
@@ -122,6 +125,17 @@ class Subscription extends Component {
     );
   }
 
+  renderStaffs = () => {
+    const { navigate } = this.props.navigation;
+    return this.props.Subscription.staffSubscription.map((staff, index) => 
+      <SubscriptionButton 
+        key={index}
+        title={staff.staffId.fullname}
+        onPress={() => navigate('SubscriptionManage', { type: 'staff', staff }) }
+      />
+    );
+  }
+
   renderContent = () => {
     const { navigate } = this.props.navigation;
     return (
@@ -144,7 +158,7 @@ class Subscription extends Component {
           </View>
           <SubscriptionButton 
             title="Attender Premium"
-            onPress={() => navigate('SubscriptionManage') }
+            onPress={() => navigate('SubscriptionManage', { type: 'premium', staff: this.props.Subscription.subscription }) }
           />
           <View style={{ marginTop: 50 }}>
             <Text style={{
@@ -157,22 +171,7 @@ class Subscription extends Component {
               Managing Staff
             </Text>
           </View>
-          <SubscriptionButton
-            title="John Smith"
-            onPress={() => navigate('SubscriptionManage') }
-          />
-          <SubscriptionButton 
-            title="Anne Smith"
-            onPress={() => console.warn('Test') }
-          />
-          <SubscriptionButton 
-            title="Juan Pedro"
-            onPress={() => console.warn('Test') }
-          />
-          <SubscriptionButton 
-            title="Rizal Jose"
-            onPress={() => console.warn('Test') }
-          />
+          {this.renderStaffs()}
         </View>
         
       </ScrollView>
@@ -209,6 +208,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     dispatch: dispatch,
+    actions: bindActionCreators(actions, dispatch),
   };
 }
 

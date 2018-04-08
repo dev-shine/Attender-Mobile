@@ -2,6 +2,7 @@ import ZTextMedium from 'ZTextMedium';
 import Icon from 'react-native-vector-icons/Ionicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   AppRegistry,
   StyleSheet,
@@ -23,6 +24,7 @@ import {
 } from 'react-navigation';
 
 import API from 'API';
+import * as actions from '../Reducers/subscriptionActions';
 
 class Home extends Component {
 
@@ -31,7 +33,7 @@ class Home extends Component {
     this.state = {
       selected: false,
       isLoggined: false,
-      email: 'admin@attender.com',
+      email: 'admin@attenderSubscription.com',
       password: 'password',
       userData: {
         employer: {
@@ -158,7 +160,20 @@ class Home extends Component {
                 <ZTextMedium text="Settings" />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigate('Subscription', { from: this.props.navigation.state.key })}>
+              <TouchableOpacity 
+                onPress={() => {
+                  this.props.actions.checkSubscription((data) => {
+                    if (data.status) {
+                      if (data.status) {
+                        this.props.dispatch({ type: 'SET_SUBSCRIPTION', payload: data.subscription });
+                      }
+                      navigate('Subscription');
+                    } else {
+                      navigate('SubscriptionSubscribe', { type: 'premium' });
+                    }
+                  });
+                }}
+              >
                 <ZTextMedium text="Subscription" />
               </TouchableOpacity>
 
@@ -239,10 +254,6 @@ class Home extends Component {
                 <ZTextMedium text="Settings" />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => navigate('Subscription')}>
-                <ZTextMedium text="Subscription" />
-              </TouchableOpacity>
-
               <TouchableOpacity onPress={() => navigate('Notification', {isStaff: false,  onGoBack: () => this.getAllData()})}>
                 <ZTextMedium text="Notifications" />
               </TouchableOpacity>
@@ -295,6 +306,7 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
+    actions: bindActionCreators(actions, dispatch),
     dispatch: dispatch,
   };
 }

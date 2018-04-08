@@ -2,6 +2,7 @@ import ZTextMedium from 'ZTextMedium';
 import Icon from 'react-native-vector-icons/Ionicons';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   AppRegistry,
   StyleSheet,
@@ -21,6 +22,8 @@ import {
 import {
   StackNavigator,
 } from 'react-navigation';
+
+import * as actions from '../Reducers/subscriptionActions';
 
 import API from 'API';
 
@@ -136,12 +139,24 @@ class SubscriptionSubscribe extends Component {
     const { navigate, goBack } = this.props.navigation;
     return (
       <View style={{flexDirection: 'row', marginBottom: 8, alignItems: 'center', justifyContent: 'center'}}>
-        <TouchableOpacity onPress={() => navigate('SubscriptionManage')}>
+        <TouchableOpacity 
+          onPress={() => {
+            this.props.actions.subscribePremium((data) => {
+              goBack();
+            });
+          }}
+        >
           <View style={{borderRadius: 5, backgroundColor: '#5FDAE9', padding: 5, margin: 10, width: 140, height: 40, borderRadius: 30, alignItems: 'center', justifyContent: 'center'}}>
             <Text style={{fontFamily: 'AvenirNextLTPro-Demi', fontSize: 14, color: 'white'}}>Subscribe Now</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => goBack(this.props.from)}>
+        <TouchableOpacity 
+          onPress={
+            () => {
+              goBack();
+            }
+          }
+        >
           <View style={{borderRadius: 5, backgroundColor: 'transparent', padding: 5, margin: 10, borderWidth: 1, borderColor: 'white', width: 140, height: 40, borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{fontFamily: 'AvenirNextLTPro-Demi', fontSize: 14, color: 'white'}}>No Thanks</Text>
           </View>
@@ -151,19 +166,24 @@ class SubscriptionSubscribe extends Component {
   }
 
   renderContent = () => {
+    const { state } = this.props.navigation;
+    const premium = state.params.type === "premium";
     return (
-      <View style={{ flex: 1, flexDirection: 'column' }}>
-        <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}>
-          {this.renderHeader()}
-          {this.renderManageStaff()}
+      <ScrollView>
+        <View style={{ flex: 1, flexDirection: 'column' }}>
+          <View style={{flex: 1, flexDirection: 'column', alignItems: 'center'}}>
+            {this.renderHeader()}
+            {premium ? this.renderPremium() : this.renderManageStaff()}
+          </View>
+          {this.renderButtons()}
         </View>
-        {this.renderButtons()}
-      </View>
+      </ScrollView>
     );
   }
 
 
   render() {
+    
     return (
       <ImageBackground source={require('../Assets/Rectangle.png')} style={{flex: 1, paddingTop: (Platform.OS === 'ios' ? 30: 0)}}>
         {this.renderContent()}
@@ -192,6 +212,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     dispatch: dispatch,
+    actions: bindActionCreators(actions, dispatch),
   };
 }
 
