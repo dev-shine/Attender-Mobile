@@ -88,6 +88,7 @@ export default class Dashboard extends Component {
             isKitchen: false,
             isBarback: false,
             isHost: false,
+            isBarista: false,
             isShowLanguage: false,
             myStaffs: {
                 bartender: [],
@@ -96,7 +97,8 @@ export default class Dashboard extends Component {
                 chef: [],
                 kitchen: [],
                 barback: [],
-                host: []
+                host: [],
+                barista: [],
             },
             totalStafffs: 0,
             isLanguage: false,
@@ -345,6 +347,15 @@ export default class Dashboard extends Component {
                 }
             }
                 break;
+            case 'Barista': {
+                if (!value) {
+                    var index = $filterBy.indexOf(filterBy);
+                    $filterBy.splice(index, 1)
+                } else {
+                    $filterBy.push(filterBy.toLowerCase());
+                }
+            }
+                break;
             default:
 
         }
@@ -455,6 +466,15 @@ export default class Dashboard extends Component {
             }
                 break;
             case 'Host': {
+                if (!value) {
+                    var index = $filterMessage.indexOf(filterMessage);
+                    $filterMessage.splice(index, 1)
+                } else {
+                    $filterMessage.push(filterMessage.toLowerCase());
+                }
+            }
+                break;
+            case 'Barista': {
                 if (!value) {
                     var index = $filterMessage.indexOf(filterMessage);
                     $filterMessage.splice(index, 1)
@@ -768,6 +788,44 @@ export default class Dashboard extends Component {
         }
     }
 
+    renderBarista = () => {
+        const {navigate} = this.props.navigation;
+        if (this.state.isBarista) {
+            return (
+                <View style={styles.plainBody}>
+                    <ZSliderCard>
+                        {
+                            this.state.myStaffs.barista.map((res, id) => {
+                                return (
+                                    <ZCard key={id}
+                                           styles={{borderWidth: 0, backgroundColor: 'white', marginRight: 10}}>
+                                        <ZAvatar source={this.renderStaffAvatar(res.staff)} hideIndicator={true}/>
+                                        <ZText text={res.staff.fullname} styles={{fontSize: 14}}/>
+                                        <ZRater/>
+                                        <ZMuteText text={res.staff.frequency}/>
+                                        <View style={{marginVertical: 10}}>
+                                            <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true}
+                                                            isSelected={this.state.selected} selectedColor="#5F5FBA"/>
+                                        </View>
+                                    </ZCard>
+
+                                )
+                            })
+                        }
+                    </ZSliderCard>
+                    <ZButtonOutline name={`See all ${this.state.myStaffs.barista.length} Baristas ↓`} styles={{
+                        borderColor: '#D5D4D9',
+                        backgroundColor: '#F4F4F4',
+                        padding: 10,
+                        width: 200,
+                        height: 40,
+                        alignSelf: 'center'
+                    }} textStyles={{color: '#A4A1A9'}} onPress={() => navigate('VStaff', {userData: userProfile})}/>
+                </View>
+            )
+        }
+    }
+
     renderManager = () => {
         const {navigate} = this.props.navigation;
         if (this.state.isManager) {
@@ -1033,6 +1091,12 @@ export default class Dashboard extends Component {
                 this.setState({isHost: false})
             } else {
                 this.setState({isHost: true})
+            }
+        } else if (type == 'Barista') {
+            if (this.state.isBarista) {
+                this.setState({isBarista: false})
+            } else {
+                this.setState({isBarista: true})
             }
         }
     }
@@ -1456,6 +1520,9 @@ export default class Dashboard extends Component {
                                     <ZRoundedButton name="Host" isSelected={this.state.selected} selectedColor="#64DAE7"
                                                     height={35}
                                                     selectedButton={(value) => this.getFilterBy('Host', 10, value)}/>
+                                    <ZRoundedButton name="Barista" isSelected={this.state.selected}
+                                                    selectedColor="#64DAE7" height={35}
+                                                    selectedButton={(value) => this.getFilterBy('Barista', 11, value)}/>
                                 </ZSliderCard>
                             </View>
                             {
@@ -1734,6 +1801,9 @@ export default class Dashboard extends Component {
                                         <ZRoundedButton name="Host" isSelected={this.state.selected}
                                                         selectedColor="#64DAE7" height={35}
                                                         selectedButton={(value) => this.getFilterMessage('Host', 12, value)}/>
+                                        <ZRoundedButton name="Barista" isSelected={this.state.selected}
+                                                        selectedColor="#64DAE7" height={35}
+                                                        selectedButton={(value) => this.getFilterMessage('Barista', 13, value)}/>
                                     </ZSliderCard>
                                 </View>
 
@@ -1899,6 +1969,11 @@ export default class Dashboard extends Component {
                                            isSelected={this.state.isHost}
                                            selectedIcon={() => this.onButtonPress('Host')}
                                            badge={this.state.myStaffs.host.length}/>
+                                    <ZIcon photoUrlSelected={require('./Assets/Bartendericonselected.png')}
+                                           photoUrlUnSelected={require('./Assets/Bartendericon.png')} iconText="Barista"
+                                           isSelected={this.state.isBarista}
+                                           selectedIcon={() => this.onButtonPress('Barista')}
+                                           badge={this.state.myStaffs.barista.length}/>
                                 </ZSliderCard>
                             </View>
                         </View>
@@ -1910,6 +1985,7 @@ export default class Dashboard extends Component {
                         {this.renderKitchen()}
                         {this.renderBarback()}
                         {this.renderHost()}
+                        {this.renderBarista()}
 
                         <View style={styles.body}>
                             <ZCard styles={{paddingTop: -10, paddingBottom: 10}}>
