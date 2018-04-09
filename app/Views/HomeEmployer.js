@@ -1,6 +1,8 @@
 import ZTextMedium from 'ZTextMedium';
 import Icon from 'react-native-vector-icons/Ionicons';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import {
   AppRegistry,
   StyleSheet,
@@ -22,15 +24,16 @@ import {
 } from 'react-navigation';
 
 import API from 'API';
+import * as actions from '../Reducers/subscriptionActions';
 
-export default class Home extends Component {
+class Home extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
       selected: false,
       isLoggined: false,
-      email: 'admin@attender.com',
+      email: 'admin@attenderSubscription.com',
       password: 'password',
       userData: {
         employer: {
@@ -68,6 +71,7 @@ export default class Home extends Component {
   onLogout = () => {
     AsyncStorage.setItem('Token', '');
     AsyncStorage.setItem('User', '');
+    this.props.dispatch({ type: 'LOGOUT_RESET' });
     this.props.navigation.dispatch({type: 'Navigation/RESET', index: 0, actions: [{ type: 'Navigate', routeName:'Login'}]})
   }
 
@@ -99,8 +103,21 @@ export default class Home extends Component {
           <View style={{padding: 30}}>
 
             <View style={{flexDirection: 'row', marginTop: 10}}>
-              <View style={{flexDirection: 'column', alignItems: 'center', width: 100}}>
-                <Image source={require('../Assets/logo.png')} style={{width: 50, height: 50, borderRadius: 25, resizeMode: 'stretch'}}/>
+              <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start'}}>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    backgroundColor: '#fff', 
+                    width: 50, 
+                    height: 50, 
+                    borderRadius: 25,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Image source={require('../Assets/logo.png')} style={{ width: 50, height: 50, borderRadius: 25, overflow: 'hidden'}}/>
+                </View>
                 <Text style={{color: 'white', backgroundColor: 'transparent', fontSize: 20}}>Attender</Text>
               </View>
             </View>
@@ -143,6 +160,23 @@ export default class Home extends Component {
                 <ZTextMedium text="Settings" />
               </TouchableOpacity>
 
+              <TouchableOpacity 
+                onPress={() => {
+                  this.props.actions.checkSubscription((data) => {
+                    if (data.status) {
+                      if (data.status) {
+                        this.props.dispatch({ type: 'SET_SUBSCRIPTION', payload: data.subscription });
+                      }
+                      navigate('Subscription');
+                    } else {
+                      navigate('SubscriptionSubscribe', { type: 'premium' });
+                    }
+                  });
+                }}
+              >
+                <ZTextMedium text="Subscription" />
+              </TouchableOpacity>
+
               <TouchableOpacity onPress={() => navigate('Notification', {isStaff: false,  onGoBack: () => this.getAllData()})}>
                 <ZTextMedium text="Notifications" />
                 {
@@ -153,7 +187,7 @@ export default class Home extends Component {
                   : null
                 }
               </TouchableOpacity>
-
+              
               <View style={{marginVertical: 40}}>
                 <TouchableOpacity onPress={() => this.onLogout()}>
                   <ZTextMedium text="Log out" styles={{fontSize: 18}}/>
@@ -170,8 +204,21 @@ export default class Home extends Component {
           <View style={{padding: 30}}>
 
             <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10}}>
-              <View style={{flex: 1, flexDirection: 'column'}}>
-                <Image source={require('../Assets/logo.png')} style={{width: 50, height: 50, borderRadius: 25, marginLeft: 10, resizeMode: 'stretch'}}/>
+              <View style={{flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start'}}>
+                <View
+                  style={{
+                    flexDirection: 'column',
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    backgroundColor: '#fff', 
+                    width: 50, 
+                    height: 50, 
+                    borderRadius: 25,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <Image source={require('../Assets/logo.png')} style={{ width: 50, height: 50, borderRadius: 25, overflow: 'hidden'}}/>
+                </View>
                 <Text style={{color: 'white', backgroundColor: 'transparent', fontSize: 20}}>Attender</Text>
               </View>
             </View>
@@ -211,6 +258,8 @@ export default class Home extends Component {
                 <ZTextMedium text="Notifications" />
               </TouchableOpacity>
 
+
+
               <View style={{marginVertical: 40}}>
                 <TouchableOpacity onPress={() => this.onLogout()}>
                   <ZTextMedium text="Log out" styles={{fontSize: 18}}/>
@@ -248,3 +297,18 @@ const styles = StyleSheet.create({
     width: null
   }
 });
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ...state
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    actions: bindActionCreators(actions, dispatch),
+    dispatch: dispatch,
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

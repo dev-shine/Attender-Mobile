@@ -61,11 +61,15 @@ import Notification from './app/Views/Notification';
 import Messages from './app/Views/Messages';
 import StaffTimeSheet from './app/Views/StaffTimeSheet';
 import SearchStaff from './app/Views/SearchStaff';
+import Subscription from './app/Views/Subscription';
+import SubscriptionManage from './app/Views/SubscriptionManage';
+import SubscriptionSubscribe from './app/Views/SubscriptionSubscribe';
 
 import API from 'API';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   AppRegistry,
   StyleSheet,
@@ -95,6 +99,19 @@ const autoLogin = NavigationActions.reset({
   ]
 });
 
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ...state
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    dispatch: dispatch,
+  };
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
 class Attender extends Component {
 
   constructor(props) {
@@ -116,6 +133,7 @@ class Attender extends Component {
           console.log('Token', JSON.parse(token));
           if(token != null){
             API.REQUEST_TOKEN = JSON.parse(token);
+            this.props.dispatch({ type: 'SET_AUTHENTICATION', payload: JSON.parse(token) });
             this.getCurrentUser('');
             // this.props.navigation.dispatch(autoLogin);
           }else{
@@ -147,6 +165,7 @@ class Attender extends Component {
         console.log('Token', JSON.parse(token));
         if(token != null){
           API.REQUEST_TOKEN = JSON.parse(token);
+          this.props.dispatch({ type: 'SET_AUTHENTICATION', payload: JSON.parse(token) });
           this.getCurrentUser('');
           // this.props.navigation.dispatch(autoLogin);
         }else{
@@ -193,6 +212,7 @@ class Attender extends Component {
     API.get(`auth/current?dToken=${dToken}&type=ios`).then((res) => {
       console.log(res);
       if(res.status){
+        this.props.dispatch({ type: 'SET_USERDATA', payload: res.data });
         AsyncStorage.setItem('User', JSON.stringify(res.data));
         if (res.data.hasProfile) {
           if (res.data.isStaff) {
@@ -264,6 +284,8 @@ class Attender extends Component {
 
 }
 
+
+
 const App = StackNavigator(
   {
     Main: {screen: Attender},
@@ -313,7 +335,10 @@ const App = StackNavigator(
     Notification: {screen: Notification},
     Messages: {screen: Messages},
     StaffTimeSheet: {screen: StaffTimeSheet},
-    SearchStaff: {screen: SearchStaff}
+    SearchStaff: {screen: SearchStaff},
+    Subscription: {screen: Subscription},
+    SubscriptionSubscribe: {screen: SubscriptionSubscribe},
+    SubscriptionManage: {screen: SubscriptionManage},
   },
   {
     initialRouteName: 'Main'
