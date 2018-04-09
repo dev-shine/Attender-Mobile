@@ -511,6 +511,15 @@ export default class ProfileSetup extends Component {
                 }
             }
                 break;
+            case 'barista': {
+                if (!value) {
+                    var index = $jobType.indexOf(job);
+                    $jobType.splice(index, 1);
+                } else {
+                    $jobType.push(job);
+                }
+            }
+                break;
             default:
         }
         this.onValidateFields('position', this.state.jobType);
@@ -2320,6 +2329,10 @@ export default class ProfileSetup extends Component {
                                                 photoUrlUnSelected={require('../Assets/hosticon.png')} iconText="Host"
                                                 isSelected={this.state.isHost}
                                                 selectedIcon={(value) => this.onSelectJobType('host', 6, value)}/>
+                                                <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')}
+                                                photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Barista"
+                                                isSelected={this.state.isBarista}
+                                                selectedIcon={(value) => this.onSelectJobType('barista', 7, value)}/>
                                                 </ZSliderCard>
                                                 </View>
                                                 </Validate>
