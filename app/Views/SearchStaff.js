@@ -31,12 +31,14 @@ export default class SearchStaff extends Component {
       kitchensValue: 0,
       barbacksValue: 0,
       hostsValue: 0,
+      baristasValue: 0,
       isBartender: false,
       isManager: false,
       isWaiter: false,
       isKitchen: false,
       isBarback: false,
-      isHost: false
+      isHost: false,
+      isBarista: false
     }
   }
 
@@ -107,6 +109,16 @@ export default class SearchStaff extends Component {
         }
       }
       break;
+      case 'Barista':
+      {
+        if(!value){
+          var index = $staffType.indexOf(staffType);
+          $staffType.splice(index, 1)
+        }else {
+          $staffType.push(staffType);
+        }
+      }
+      break;
       default:
     }
     console.log($staffType);
@@ -148,6 +160,12 @@ export default class SearchStaff extends Component {
         this.setState({isHost: false});
       }else {
         this.setState({isHost: true});
+      }
+    } else if (type == 'Barista') {
+      if (this.state.isBarista) {
+        this.setState({isBarista: false});
+      }else {
+        this.setState({isBarista: true});
       }
     }
   }
@@ -242,6 +260,21 @@ export default class SearchStaff extends Component {
     }
   }
 
+  renderBarista = () => {
+    if (this.state.isBarista) {
+      return(
+        <View style={styles.body}>
+          <View style={{flex: 1}}>
+            <ZHero text="Barista" styles={{color: '#33314B'}}/>
+            <View style={{marginVertical: 15}}>
+              <ZNumericStepperBadge value={this.state.baristasValue} onChangeValue={(value) => this.setState({baristasValue: value})}/>
+            </View>
+          </View>
+        </View>
+      )
+    }
+  }
+
   render() {
     const { navigate } = this.props.navigation;
     LayoutAnimation.easeInEaseOut();
@@ -267,6 +300,7 @@ export default class SearchStaff extends Component {
                 <ZIcon photoUrlSelected={require('../Assets/cookiconselected.png')} photoUrlUnSelected={require('../Assets/cookicon.png')} iconText="Kitchen" isSelected={this.state.isKitchen} selectedIcon={(value) => [this.getStaffType('Kitchen', 3, value), this.onIconPress('Kitchen')]} />
                 <ZIcon photoUrlSelected={require('../Assets/barbackiconselected.png')} photoUrlUnSelected={require('../Assets/barbackicon.png')} iconText="Barback" isSelected={this.state.isBarback} selectedIcon={(value) => [this.getStaffType('Barback', 4, value), this.onIconPress('Barback')]} />
                 <ZIcon photoUrlSelected={require('../Assets/hosticonselected.png')} photoUrlUnSelected={require('../Assets/hosticon.png')} iconText="Host" isSelected={this.state.isHost} selectedIcon={(value) => [this.getStaffType('Host', 5, value), this.onIconPress('Host')]} />
+                <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')} photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Barista" isSelected={this.state.isBarista} selectedIcon={(value) => [this.getStaffType('Barista', 0, value), this.onIconPress('Barista')]} />
               </ZSliderCard>
             </View>
           </View>
@@ -280,6 +314,7 @@ export default class SearchStaff extends Component {
                 {this.renderKitchen()}
                 {this.renderBarback()}
                 {this.renderHost()}
+                {this.renderBarista()}
               </View>
             : null
           }
