@@ -224,6 +224,16 @@ export default class Messages extends Component {
             }
           }
         break;
+        case 'Barista':
+          {
+            if(!value){
+              var index = $filterMessage.indexOf(filterMessage);
+              $filterMessage.splice(index, 1)
+            }else {
+              $filterMessage.push(filterMessage);
+            }
+          }
+        break;
         default:
 
       }
@@ -328,6 +338,7 @@ export default class Messages extends Component {
                 <ZRoundedButton name="Waiter" isSelected={this.state.selected} selectedColor="#64DAE7" height={35} selectedButton={(value) => this.getFilterMessage('Waiter', 6, value)} />
                 <ZRoundedButton name="Kitchen" isSelected={this.state.selected} selectedColor="#64DAE7" height={35} selectedButton={(value) => this.getFilterMessage('Kitchen', 7, value)} />
                 <ZRoundedButton name="Housekeeper" isSelected={this.state.selected} selectedColor="#64DAE7" height={35} selectedButton={(value) => this.getFilterMessage('Housekeeper', 8, value)} />
+                <ZRoundedButton name="Barista" isSelected={this.state.selected} selectedColor="#64DAE7" height={35} selectedButton={(value) => this.getFilterMessage('Barista', 9, value)} />
               </ZSliderCard>
             </View>
 
