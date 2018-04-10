@@ -13,6 +13,9 @@ import {
   Image,
   Modal
 } from 'react-native';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../Reducers/subscriptionActions';
 
 import { GiftedChat, Actions, Bubble, Send } from 'react-native-gifted-chat';
 import ZCustomHeader from 'ZCustomHeader';
@@ -26,7 +29,7 @@ const client = io.channel('chat').connect();
 // import CustomActions from '../Helper/CustomActions';
 // import CustomView from '../Helper/CustomView';
 
-export default class Default extends Component {
+class Default extends Component {
 
   constructor(props) {
     super(props);
@@ -353,6 +356,7 @@ export default class Default extends Component {
   }
 
   renderGiveTrial = () => {
+      const { navigate } = this.props.navigation;
       let fullname = this.props.navigation.state.params.staff.user.fullname == undefined ? this.props.navigation.state.params.staff.fullname: this.props.navigation.state.params.staff.user.fullname
 
       console.log(fullname)
@@ -383,7 +387,25 @@ export default class Default extends Component {
               <ZText text="and hire right away." styles={{color: '#727272', marginTop: 1, fontSize: 12}}/>
             </View>
             <View style={{marginTop: 40, flexDirection: 'row'}}>
-              <TouchableOpacity onPress={()=>this.onPressStartTrial()}>
+              <TouchableOpacity 
+                onPress={()=> {
+                  if (this.props.Auth.user.isVenue) {
+                    this.props.actions.checkSubscription('ACCOUNT_PREMIUM', (data) => {
+                      if (data.status) {
+                        this.props.dispatch({ type: 'SET_SUBSCRIPTION', payload: data.subscription });
+                        this.onPressStartTrial()
+                      } else {
+                        this.setState({isShowTrialEvent: false}, () => {
+                          navigate('SubscriptionSubscribe', { type: 'premium' });
+                        });
+                      }
+                    });
+                  } else {
+                    this.onPressStartTrial();
+                  }
+                  
+                }}
+              >
                 <View style={{marginRight: 50}}>
                   <View style={{borderRadius: 40, backgroundColor: '#5FDAE9', padding: 5, margin: 10, paddingHorizontal: 10, width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center'}}>
                     <Text style={{fontSize: 15, fontWeight: '500', color: '#D9FFFF'}}>OK</Text>
@@ -394,7 +416,23 @@ export default class Default extends Component {
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={()=>this.onPressSkipTrial()}>
+              <TouchableOpacity 
+                onPress={() => {
+                  if (this.props.Auth.user.isVenue) {
+                    this.props.actions.checkStaffSubscription('MANAGE_STAFF', this.props.navigation.state.params.staff._id, (data) => {
+                      if (data.status) {
+                        this.onPressSkipTrial();
+                      } else {
+                        this.setState({isShowTrialEvent: false}, () => {
+                          navigate('SubscriptionSubscribe', { type: 'manage', staffId: this.props.navigation.state.params.staff._id });
+                        });
+                      }
+                    });
+                  } else {
+                    this.onPressSkipTrial();
+                  }
+                }}
+              >
                 <View style={{borderRadius: 40, backgroundColor: '#5D5CAA', margin: 10, width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center'}}>
                   <Image source={
                     require('../Assets/topleftarrowicon.png')}
@@ -445,6 +483,21 @@ export default class Default extends Component {
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ...state
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    actions: bindActionCreators(actions, dispatch),
+    dispatch: dispatch,
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Default);
 
 const styles = StyleSheet.create({
   footerContainer: {

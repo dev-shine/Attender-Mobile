@@ -41,12 +41,15 @@ import {
     Image,
     LayoutAnimation
 } from 'react-native';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as actions from '../Reducers/subscriptionActions';
 
 const ws = require('adonis-websocket-client');
 const io = ws('https://staging.attender.com.au');
 export const client = io.channel('chat').connect();
 
-export default class VenueStaff extends Component {
+class VenueStaff extends Component {
 
     constructor(props) {
         super(props);
@@ -3936,6 +3939,7 @@ export default class VenueStaff extends Component {
     }
 
     renderTrialProfile = () => {
+        const { navigate } = this.props.navigation;
         if (this.state.isTrialShow) {
             return (
                 <View style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'white'}}>
@@ -4048,12 +4052,31 @@ export default class VenueStaff extends Component {
                             justifyContent: 'center',
                             alignItems: 'center'
                         }}>
-                            <ZRoundedButton name="Hire Now" styles={{marginRight: 20}} normalButtonStyle={{
+                            <ZRoundedButton 
+                              name="Hire Now" 
+                              styles={{marginRight: 20}} 
+                              normalButtonStyle={{
                                 backgroundColor: '#64DAE7',
                                 width: 140,
                                 alignSelf: 'center'
-                            }} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA"
-                                            onPress={() => this.onDirectHire()}/>
+                              }} 
+                              normal={true} 
+                              isSelected={this.state.selected} 
+                              selectedColor="#5F5FBA"
+                              onPress={() => {
+                                if (this.props.Auth.user.isVenue) {
+                                  this.props.actions.checkStaffSubscription('MANAGE_STAFF', this.state.selectedStaff.staff._id, (data) => {
+                                    if (data.status) {
+                                      this.onDirectHire();
+                                    } else {
+                                      navigate('SubscriptionSubscribe', { type: 'manage', staffId: this.state.selectedStaff.staff._id });
+                                    }
+                                  });
+                                } else {
+                                  this.onDirectHire();
+                                }
+                              }}
+                            />
                         </View>
                     </ScrollView>
                 </View>
@@ -4102,6 +4125,21 @@ export default class VenueStaff extends Component {
     }
 
 }
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    ...state
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    actions: bindActionCreators(actions, dispatch),
+    dispatch: dispatch,
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(VenueStaff);
 
 const styles = StyleSheet.create({
     container: {

@@ -4,7 +4,22 @@
 
 
 import Frisbee from 'frisbee';
+import axios from 'axios';
 import AppConfig from 'AppConfig';
+
+
+export const axi = (token) => {
+  const api = axios.create({
+    baseURL: AppConfig.API_URL,
+    timeout: 5000,
+    headers: {
+      'Content-type': 'application/json',
+      'Accept': 'application/vnd.github.v3+json',
+      'X-request-token': token,
+    },
+  });
+  return api;
+}
 
 const api = (token) => {
 
