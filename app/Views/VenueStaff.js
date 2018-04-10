@@ -128,6 +128,7 @@ export default class VenueStaff extends Component {
             kitchens: [],
             barbacks: [],
             hosts: [],
+            baristas: [],
             bartenders2: [],
             managers2: [],
             waiters2: [],
@@ -135,6 +136,7 @@ export default class VenueStaff extends Component {
             kitchens2: [],
             barbacks2: [],
             hosts2: [],
+            baristas2: [],
             isBartender: true,
             isManager: true,
             isWaiter: true,
@@ -142,6 +144,7 @@ export default class VenueStaff extends Component {
             isKitchen: true,
             isBarbacks: true,
             isHost: true,
+            isBarista: true,
             types: [],
             isLanguage: false,
             isLicense: false,
@@ -241,7 +244,8 @@ export default class VenueStaff extends Component {
                     chefs: res.managements.chefs,
                     kitchens: res.managements.kitchen,
                     barbacks: res.managements.barback,
-                    hosts: res.managements.host
+                    hosts: res.managements.host,
+                    baristas: res.baristas.barista
                 });
             }
         })
@@ -259,7 +263,8 @@ export default class VenueStaff extends Component {
                     chefs2: res.managements.chefs,
                     kitchens2: res.managements.kitchen,
                     barbacks2: res.managements.barback,
-                    hosts2: res.managements.host
+                    hosts2: res.managements.host,
+                    baristas2: res.managements.barista
                 });
             }
         })
@@ -2748,6 +2753,16 @@ export default class VenueStaff extends Component {
                     this.setState({isHost: true});
                 }
                 break;
+            case 'barista':
+                if (!value) {
+                    var index = $type.indexOf(type);
+                    $type.splice(index, 1);
+                    this.setState({isBarista: false});
+                } else {
+                    $type.push(type);
+                    this.setState({isBarista: true});
+                }
+                break;
             default:
         }
         console.log($type);
@@ -3092,6 +3107,61 @@ export default class VenueStaff extends Component {
             <View style={styles.cardBody}>
                 {
                     this.state.hosts.map((res, index) => {
+                        return (
+                            <ZCard key={index} styles={{borderWidth: 0, backgroundColor: 'white', margin: 5}}>
+                                <TouchableOpacity onPress={() => this.setState({
+                                    isTrialShow: false,
+                                    isActiveContent: true,
+                                    selectedStaff: res
+                                })}>
+                                    <ZAvatar source={this.renderAvatar(res.staff)} hideIndicator={true}/>
+                                    <ZText text={res.staff.fullname} styles={{fontSize: 14}}/>
+                                </TouchableOpacity>
+                                <ZRater/>
+                                <ZMuteText text={res.staff.frequency}/>
+                                <ZMuteText text={res.staff.rateBadge}/>
+                                <View style={{marginVertical: 10}}>
+                                    <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true}
+                                                    isSelected={this.state.selected} selectedColor="#5F5FBA"
+                                                    onPress={() => this.getConversationId(res, myProfile)}/>
+                                </View>
+
+                                <TouchableOpacity
+                                    onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
+                                    <View style={{borderBottomWidth: 1, borderColor: '#5F5FBA'}}>
+                                        <Text style={{color: '#5F5FBA', fontSize: 13}}>Add monthly review</Text>
+                                    </View>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => this.onSelectStaffSchedule(res)}
+                                                  style={{position: 'absolute', top: 20, right: 10}}>
+                                    <View>
+                                        <Icon name="md-calendar" size={30} color="#716D7B"/>
+                                    </View>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => this.onPayStaff(res)}
+                                                  style={{position: 'absolute', top: 20, left: 10}}>
+                                    <View>
+                                        <Icon name="md-time" size={30} color="#716D7B"/>
+                                    </View>
+                                </TouchableOpacity>
+
+                            </ZCard>
+                        )
+                    })
+                }
+            </View>
+        )
+    }
+
+    renderBarista = () => {
+        let myProfile = this.state.userData;
+
+        return (
+            <View style={styles.cardBody}>
+                {
+                    this.state.baristas.map((res, index) => {
                         return (
                             <ZCard key={index} styles={{borderWidth: 0, backgroundColor: 'white', margin: 5}}>
                                 <TouchableOpacity onPress={() => this.setState({
@@ -3523,6 +3593,54 @@ export default class VenueStaff extends Component {
         )
     }
 
+    renderBarista2 = () => {
+        let myProfile = this.state.userData;
+
+        return (
+            <View style={styles.cardBody}>
+                {
+                    this.state.baristas2.map((res, index) => {
+                        return (
+                            <ZCard key={index} styles={{borderWidth: 0, backgroundColor: 'white', margin: 5}}>
+                                <TouchableOpacity onPress={() => this.setState({
+                                    isTrialShow: true,
+                                    isActiveContent: false,
+                                    selectedStaff: res
+                                })}>
+                                    <ZAvatar source={this.renderAvatar(res.staff)} hideIndicator={true}/>
+                                    <ZText text={res.staff.fullname} styles={{fontSize: 14}}/>
+                                </TouchableOpacity>
+                                <ZRater/>
+                                <ZMuteText text={res.staff.frequency}/>
+                                <ZMuteText text={res.staff.rateBadge}/>
+                                <View style={{marginVertical: 10}}>
+                                    <ZRoundedButton name="Send Message" styles={{marginRight: 0}} normal={true}
+                                                    isSelected={this.state.selected} selectedColor="#5F5FBA"
+                                                    onPress={() => this.getConversationId(res, myProfile)}/>
+                                </View>
+
+                                <TouchableOpacity
+                                    onPress={() => this.props.navigation.navigate('MonthlyReview', {props: res})}>
+                                    <View style={{borderBottomWidth: 1, borderColor: '#5F5FBA'}}>
+                                        <Text style={{color: '#5F5FBA', fontSize: 13}}>Add monthly review</Text>
+                                    </View>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity onPress={() => this.onSelectStaffSchedule(res)}
+                                                  style={{position: 'absolute', top: 20, right: 10}}>
+                                    <View>
+                                        <Icon name="md-calendar" size={30} color="#716D7B"/>
+                                    </View>
+                                </TouchableOpacity>
+
+                            </ZCard>
+                        )
+                    })
+                }
+            </View>
+        )
+    }
+
     renderLanguage = (skills) => {
         if (this.state.isLanguage) {
             return (
@@ -3735,7 +3853,10 @@ export default class VenueStaff extends Component {
                                photoUrlUnSelected={require('../Assets/hosticon.png')} iconText="Host"
                                isSelected={this.state.isHost}
                                selectedIcon={(value) => this.getSelectedType('host', 6, value)}/>
-
+                        <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')}
+                               photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Baristas"
+                               isSelected={this.state.isBarista}
+                               selectedIcon={(value) => this.getSelectedType('barista', 7, value)}/>
                     </ZSliderCard>
 
                 </View>
@@ -3749,6 +3870,7 @@ export default class VenueStaff extends Component {
                     {this.state.isKitchen ? this.renderKitchen() : null}
                     {this.state.isBarback ? this.renderBarback() : null}
                     {this.state.isHost ? this.renderHost() : null}
+                    {this.state.isBarista ? this.renderBarista() : null}
                 </View>
                 {this.renderStaffModal()}
             </ScrollView>
@@ -3804,7 +3926,10 @@ export default class VenueStaff extends Component {
                                photoUrlUnSelected={require('../Assets/hosticon.png')} iconText="Host"
                                isSelected={this.state.isHost}
                                selectedIcon={(value) => this.getSelectedType('host', 6, value)}/>
-
+                        <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')}
+                               photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Barista"
+                               isSelected={this.state.isBarista}
+                               selectedIcon={(value) => this.getSelectedType('barista', 7, value)}/>
                     </ZSliderCard>
 
 

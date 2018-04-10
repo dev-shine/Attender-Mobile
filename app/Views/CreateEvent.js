@@ -56,6 +56,7 @@ export default class CreatEvent extends Component {
       kitchensValue: 0,
       barbacksValue: 0,
       hostsValue: 0,
+      baristasValue: 0,
       photo: '',
       imageSource: [],
       isTimePicker: false,
@@ -72,6 +73,7 @@ export default class CreatEvent extends Component {
       isKitchen: false,
       isBarback: false,
       isHost: false,
+      isBarista: false,
       myStaffs: {
         bartender: [],
         manager: [],
@@ -79,7 +81,8 @@ export default class CreatEvent extends Component {
         chef: [],
         kitchen: [],
         barback: [],
-        host: []
+        host: [],
+        barista: [],
       },
       eventTypes: []
     }
@@ -247,6 +250,16 @@ export default class CreatEvent extends Component {
         }
       }
       break;
+      case 'Barista':
+      {
+        if(!value){
+          var index = $staffType.indexOf(staffType);
+          $staffType.splice(index, 1)
+        }else {
+          $staffType.push(staffType);
+        }
+      }
+      break;
       default:
     }
     console.log($staffType);
@@ -391,6 +404,12 @@ export default class CreatEvent extends Component {
         this.setState({isHost: false});
       }else {
         this.setState({isHost: true});
+      }
+    } else if (type == 'Barista') {
+      if (this.state.isBarista) {
+        this.setState({isBarista: false});
+      }else {
+        this.setState({isBarista: true});
       }
     }
   }
@@ -871,6 +890,74 @@ export default class CreatEvent extends Component {
     }
   }
 
+  renderBarista = (userProfile) => {
+    const { navigate } = this.props.navigation;
+    if (this.state.isBarista) {
+      return(
+        <View style={{flex: 1}}>
+        <View style={{flex: 1}}>
+          <View style={styles.body}>
+            <ZHero text="Barista" styles={{color: '#33314B'}}/>
+            <View style={{marginVertical: 15}}>
+              <ZNumericStepperBadge value={this.state.baristasValue} onChangeValue={(value) => this.setState({baristasValue: value})}/>
+            </View>
+          </View>
+        </View>
+        <View style={{flex: 1}}>
+          <View style={styles.plainBody}>
+            <ZMuteText text="Suggested Staff" />
+            <ZSliderCard>
+              <ZCard styles={{borderWidth: 0, backgroundColor: 'white', marginRight: 10}}>
+                <ZAvatar small={true} hideIndicator={true} />
+                <ZText text="Sophie F." styles={{fontSize: 14}}/>
+                <ZRater />
+                <ZMuteText text="Full time" />
+                <View style={{marginVertical: 10}}>
+                  <ZRoundedButton name="Invite" styles={{marginRight: 0}} normalButtonStyle={{paddingHorizontal: 50}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA"  />
+                </View>
+                <TouchableOpacity style={{position: 'absolute', top: 20, right: 10}}>
+                  <View>
+                    <Icon name="md-calendar" size={30} color="#716D7B"  />
+                  </View>
+                </TouchableOpacity>
+              </ZCard>
+              <ZCard styles={{borderWidth: 0, backgroundColor: 'white', marginRight: 10}}>
+                <ZAvatar small={true} hideIndicator={true} />
+                <ZText text="Sophie F." styles={{fontSize: 14}}/>
+                <ZRater />
+                <ZMuteText text="Full time" />
+                <View style={{marginVertical: 10}}>
+                  <ZRoundedButton name="Invite" styles={{marginRight: 0}} normalButtonStyle={{paddingHorizontal: 50}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA"  />
+                </View>
+                <TouchableOpacity style={{position: 'absolute', top: 20, right: 10}}>
+                  <View>
+                    <Icon name="md-calendar" size={30} color="#716D7B"  />
+                  </View>
+                </TouchableOpacity>
+              </ZCard>
+              <ZCard styles={{borderWidth: 0, backgroundColor: 'white', marginRight: 10}}>
+                <ZAvatar small={true} hideIndicator={true} />
+                <ZText text="Sophie F." styles={{fontSize: 14}}/>
+                <ZRater />
+                <ZMuteText text="Full time" />
+                <View style={{marginVertical: 10}}>
+                  <ZRoundedButton name="Invite" styles={{marginRight: 0}} normalButtonStyle={{paddingHorizontal: 50}} normal={true} isSelected={this.state.selected} selectedColor="#5F5FBA"  />
+                </View>
+                <TouchableOpacity style={{position: 'absolute', top: 20, right: 10}}>
+                  <View>
+                    <Icon name="md-calendar" size={30} color="#716D7B"  />
+                  </View>
+                </TouchableOpacity>
+              </ZCard>
+            </ZSliderCard>
+            <ZButtonOutline name='See all 8 Baristas ↓' styles={{borderColor: '#D5D4D9', backgroundColor: '#F4F4F4', padding: 10, width: 200, height: 40, alignSelf: 'center'}} textStyles={{color: '#A4A1A9'}} onPress={() => navigate('VStaff', {userData: userProfile})}/>
+          </View>
+        </View>
+        </View>
+      )
+    }
+  }
+
   // getEventType = (eventType, id, value) => {
   //   var $eventType = this.state.eventTypes;
   //   switch (eventType){
@@ -1026,6 +1113,7 @@ export default class CreatEvent extends Component {
               <ZIcon photoUrlSelected={require('../Assets/cookiconselected.png')} photoUrlUnSelected={require('../Assets/cookicon.png')} iconText="Kitchen" isSelected={this.state.isKitchen} selectedIcon={(value) => [this.getStaffType('Kitchen', 3, value), this.onIconPress('Kitchen')]} />
               <ZIcon photoUrlSelected={require('../Assets/barbackiconselected.png')} photoUrlUnSelected={require('../Assets/barbackicon.png')} iconText="Barback" isSelected={this.state.isBarback} selectedIcon={(value) => [this.getStaffType('Barback', 4, value), this.onIconPress('Barback')]} />
               <ZIcon photoUrlSelected={require('../Assets/hosticonselected.png')} photoUrlUnSelected={require('../Assets/hosticon.png')} iconText="Host" isSelected={this.state.isHost} selectedIcon={(value) => [this.getStaffType('Host', 5, value), this.onIconPress('Host')]} />
+              <ZIcon photoUrlSelected={require('../Assets/managericonselected.png')} photoUrlUnSelected={require('../Assets/managericon.png')} iconText="Barista" isSelected={this.state.isBarista} selectedIcon={(value) => [this.getStaffType('Barista', 6, value), this.onIconPress('Barista')]} />
             </ZSliderCard>
           </View>
 
@@ -1038,6 +1126,7 @@ export default class CreatEvent extends Component {
         {this.renderKitchen(userProfile)}
         {this.renderBarback(userProfile)}
         {this.renderHost(userProfile)}
+        {this.renderBarista(userProfile)}
 
         {
           /**
