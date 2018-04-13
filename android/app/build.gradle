@@ -94,7 +94,7 @@ android {
         config {
             keyAlias 'attender_key'
             keyPassword 'Veelocity16!'
-            storeFile file('my-release-key.keystore')
+            storeFile file('/Users/jamesonvallar/Projects/WebstormProjects/attender-mobile/android/attender-key.keystore')
             storePassword 'Veelocity16!'
         }
     }

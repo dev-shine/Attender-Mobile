@@ -127,9 +127,6 @@ class Subscription extends Component {
 
   renderStaffs = () => {
     const { navigate } = this.props.navigation;
-    if (this.props.Subscription.staffSubscription === undefined) {
-      return <View/>;
-    }
     return this.props.Subscription.staffSubscription.map((staff, index) => 
       <SubscriptionButton 
         key={index}

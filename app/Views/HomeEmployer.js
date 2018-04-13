@@ -162,9 +162,11 @@ class Home extends Component {
 
               <TouchableOpacity 
                 onPress={() => {
-                  this.props.actions.checkSubscription('ACCOUNT_PREMIUM', (data) => {
+                  this.props.actions.checkSubscription((data) => {
                     if (data.status) {
-                      this.props.dispatch({ type: 'SET_SUBSCRIPTION', payload: data.subscription });
+                      if (data.status) {
+                        this.props.dispatch({ type: 'SET_SUBSCRIPTION', payload: data.subscription });
+                      }
                       navigate('Subscription');
                     } else {
                       navigate('SubscriptionSubscribe', { type: 'premium' });
