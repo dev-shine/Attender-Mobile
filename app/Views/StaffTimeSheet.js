@@ -34,13 +34,10 @@ import {
     StackNavigator,
 } from 'react-navigation';
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as actions from '../Reducers/subscriptionActions';
 
 var {height, width} = Dimensions.get('window');
 
-class StaffTimeSheet extends Component {
+export default class TrialPeriod extends Component {
 
     constructor(props) {
         super(props);
@@ -94,10 +91,6 @@ class StaffTimeSheet extends Component {
         if (this.state.banksArray.length > 0) {
             console.log(timesheet)
             var totalAmount = timesheet.totalPayableHours * this.state.startRate;
-            if (this.props.Auth.user.isOrganizer) {
-              const attenderFee = totalAmount * 0.165;
-              totalAmount = totalAmount + attenderFee;
-            }
             var promiseId = this.state.banksArray[0].promiseId;
 
             API.post(`timesheet/${timesheet.id}/make_payment`, {amount: totalAmount, account_id: promiseId})
@@ -1469,46 +1462,6 @@ class StaffTimeSheet extends Component {
 
                         </View>
                     </View>
-                    { this.props.Auth.user.isOrganizer &&
-                      <View>
-                        
-                        <View style={{flexDirection: 'row', marginTop: 20, paddingHorizontal: 30}}>
-                          <View style={{flex: 1}}>
-                              <View style={{alignItems: 'flex-start'}}>
-                                  <Text style={{fontSize: 16, color: '#34314A', fontWeight: '500'}}>
-                                    Total Payable:
-                                  </Text>
-                              </View>
-                          </View>
-
-                          <View style={{alignItems: 'center'}}>
-                              <Text style={{fontSize: 18, color: '#34314A', fontWeight: '500'}}>
-                                ${((this.getTotalPayableHours() + this.state.additionalHours*1) * this.state.startRate).toFixed(2)}
-                              </Text>
-                          </View>
-                        </View>
-                        <View style={{flexDirection: 'row', marginTop: 20, paddingHorizontal: 30}}>
-                            <View style={{flex: 1}}>
-                                <View style={{alignItems: 'flex-start'}}>
-                                    <Text style={{fontSize: 16, color: '#34314A', fontWeight: '500'}}>
-                                      Attender Fee:
-                                    </Text>
-                                </View>
-                                <View style={{alignItems: 'flex-start'}}>
-                                    <Text style={{fontSize: 14, color: '#34314A', fontWeight: '500'}}>
-                                      16.5%
-                                    </Text>
-                                </View>
-                            </View>
-
-                            <View style={{alignItems: 'center'}}>
-                                <Text style={{fontSize: 18, color: '#34314A', fontWeight: '500'}}>
-                                  ${(((this.getTotalPayableHours() + this.state.additionalHours*1) * this.state.startRate) * 0.165).toFixed(2)}
-                                </Text>
-                            </View>
-                        </View>
-                      </View>
-                    }
 
                     <View style={{flexDirection: 'row', marginTop: 20, paddingHorizontal: 30}}>
                         <View style={{flex: 1}}>
@@ -1519,13 +1472,8 @@ class StaffTimeSheet extends Component {
                         </View>
 
                         <View style={{alignItems: 'center'}}>
-                            <Text style={{fontSize: 22, color: '#34314A', fontWeight: '500'}}>
-                              AUD
-                              
-                              ${this.props.Auth.user.isOrganizer ? 
-                                (((this.getTotalPayableHours() + this.state.additionalHours*1) * this.state.startRate) + ((this.getTotalPayableHours() + this.state.additionalHours*1) * this.state.startRate) * 0.165).toFixed(2) 
-                                : ((this.getTotalPayableHours() + this.state.additionalHours*1) * this.state.startRate)}
-                            </Text>
+                            <Text style={{fontSize: 22, color: '#34314A', fontWeight: '500'}}>AUD
+                                ${((this.getTotalPayableHours() + this.state.additionalHours*1) * this.state.startRate)}</Text>
                         </View>
                     </View>
 
@@ -1552,21 +1500,6 @@ class StaffTimeSheet extends Component {
         );
     }
 }
-
-const mapStateToProps = (state, ownProps) => {
-  return {
-    ...state
-  }
-}
-
-const mapDispatchToProps = (dispatch, ownProps) => {
-  return {
-    actions: bindActionCreators(actions, dispatch),
-    dispatch: dispatch,
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(StaffTimeSheet);
 
 const styles = StyleSheet.create({
     container: {

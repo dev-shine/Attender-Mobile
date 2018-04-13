@@ -136,21 +136,14 @@ class SubscriptionSubscribe extends Component {
   }
 
   renderButtons() {
-    const { navigate, goBack, state } = this.props.navigation;
-    const premium = state.params.type === "premium";
+    const { navigate, goBack } = this.props.navigation;
     return (
       <View style={{flexDirection: 'row', marginBottom: 8, alignItems: 'center', justifyContent: 'center'}}>
         <TouchableOpacity 
           onPress={() => {
-            if (premium) {
-              this.props.actions.subscribePremium((data) => {
-                goBack();
-              });
-            } else {
-              this.props.actions.subscribeManage(state.params.staffId, (data) => {
-                goBack();
-              });
-            }
+            this.props.actions.subscribePremium((data) => {
+              goBack();
+            });
           }}
         >
           <View style={{borderRadius: 5, backgroundColor: '#5FDAE9', padding: 5, margin: 10, width: 140, height: 40, borderRadius: 30, alignItems: 'center', justifyContent: 'center'}}>
